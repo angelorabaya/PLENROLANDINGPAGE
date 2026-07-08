@@ -26,18 +26,21 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="group relative overflow-hidden rounded-2xl p-8 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500"
+            className="border-beam-container hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500"
           >
-            <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/5 group-hover:bg-emerald-500/10 rounded-full blur-2xl transition-all duration-500" />
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6 relative z-10">
-              <Eye className="text-emerald-600 dark:text-emerald-400" size={24} />
+            <div className="border-beam-light" />
+            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/5 group-hover:bg-emerald-500/10 rounded-full blur-2xl transition-all duration-500" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6 relative z-10">
+                <Eye className="text-emerald-600 dark:text-emerald-400" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
+                Vision
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
+                To develop the upland and coastal areas through shared responsibilities and open up window of livelihood opportunities to the people of Misamis Oriental focusing on responsible utilizations of natural resources and adaptation by all stakeholders of the environment policies and programs towards sustainable development.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-              Vision
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
-              To develop the upland and coastal areas through shared responsibilities and open up window of livelihood opportunities to the people of Misamis Oriental focusing on responsible utilizations of natural resources and adaptation by all stakeholders of the environment policies and programs towards sustainable development.
-            </p>
           </motion.div>
 
           {/* Mission Card */}
@@ -46,18 +49,21 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="group relative overflow-hidden rounded-2xl p-8 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:border-teal-500/30 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-500"
+            className="border-beam-container hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-500"
           >
-            <div className="absolute -top-12 -right-12 w-32 h-32 bg-teal-500/5 group-hover:bg-teal-500/10 rounded-full blur-2xl transition-all duration-500" />
-            <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center mb-6 relative z-10">
-              <Target className="text-teal-600 dark:text-teal-400" size={24} />
+            <div className="border-beam-light" />
+            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-teal-500/5 group-hover:bg-teal-500/10 rounded-full blur-2xl transition-all duration-500" />
+              <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center mb-6 relative z-10">
+                <Target className="text-teal-600 dark:text-teal-400" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-500">
+                Mission
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
+                &ldquo;A pro-active&rdquo; PLENRO upholds the advocacies for healthy environment with sustainable development and responsible utilization of natural resources in Misamis Oriental.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-500">
-              Mission
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
-              &ldquo;A pro-active&rdquo; PLENRO upholds the advocacies for healthy environment with sustainable development and responsible utilization of natural resources in Misamis Oriental.
-            </p>
           </motion.div>
         </div>
 
