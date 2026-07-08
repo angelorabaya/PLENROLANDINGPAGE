@@ -124,7 +124,7 @@ export default function Footer() {
                 { label: "DENR Region 10", url: "https://r10.denr.gov.ph" },
                 { label: "Mines & Geosciences Bureau X", url: "https://mgb.gov.ph" },
                 { label: "EMB Region 10", url: "https://emb.gov.ph" },
-                { label: "Provincial Government", url: "https://misamisoriental.gov.ph" },
+                { label: "Provincial Government", url: "https://www.misamisoriental.gov.ph/" },
               ].map((agency) => (
                 <li key={agency.label}>
                   <a
@@ -153,7 +153,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://misamisoriental.gov.ph"
+                href="https://www.misamisoriental.gov.ph/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 flex items-center justify-center transition-all duration-300"
