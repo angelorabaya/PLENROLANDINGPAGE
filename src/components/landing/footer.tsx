@@ -143,7 +143,7 @@ export default function Footer() {
             {/* Social */}
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="https://facebook.com/plenro.misor"
+                href="https://www.facebook.com/profile.php?id=61581984893275"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 flex items-center justify-center transition-all duration-300"
