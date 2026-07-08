@@ -1,9 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 import { MapPin, ChevronDown, Download } from 'lucide-react'
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -13,7 +13,7 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -22,7 +22,7 @@ const itemVariants = {
   },
 }
 
-export function HeroSection() {
+export default function HeroSection() {
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
       {/* Background Layer 1: Hero landscape image */}
@@ -101,13 +101,12 @@ export function HeroSection() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="mb-2"
         >
           <img
-            src="/images/plenro-logo.jpg"
+            src="/images/plenro.png"
             alt="PLENRO Logo"
-            width={80}
-            height={80}
-            className="rounded-full ring-2 ring-emerald-500/50 shadow-lg shadow-emerald-500/20"
+            className="w-20 h-20 object-contain drop-shadow-md"
           />
         </motion.div>
 
@@ -129,8 +128,12 @@ export function HeroSection() {
 
         {/* Badge */}
         <motion.div variants={itemVariants}>
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm">
-            <MapPin size={14} />
+          <span className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm">
+            <img
+              src="/images/logo.png"
+              alt="Misamis Oriental Logo"
+              className="w-5 h-5 object-contain"
+            />
             Misamis Oriental, Philippines
           </span>
         </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, ExternalLink, Facebook, Globe } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, ExternalLink } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -29,11 +29,9 @@ export default function Footer() {
           >
             <div className="flex items-center gap-3 mb-4">
               <img
-                src="/images/plenro-logo.jpg"
+                src="/images/plenro.png"
                 alt="PLENRO Logo"
-                width={40}
-                height={40}
-                className="rounded-full ring-2 ring-emerald-500/30"
+                className="w-10 h-10 object-contain"
               />
               <div>
                 <h3 className="font-bold text-lg bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
@@ -61,9 +59,9 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                 <span className="text-sm text-gray-400">
-                  Provincial Capitol Compound,<br />
-                  Cagayan de Oro City 9000,<br />
-                  Misamis Oriental, Philippines
+                  Ground Floor MISORTEL Building,<br />
+                  A. Luna St., Cagayan de Oro City,<br />
+                  Philippines
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -150,7 +148,9 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 flex items-center justify-center transition-all duration-300"
               >
-                <Facebook className="w-4 h-4 text-gray-400" />
+                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
               </a>
               <a
                 href="https://misamisoriental.gov.ph"
@@ -158,7 +158,11 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/10 flex items-center justify-center transition-all duration-300"
               >
-                <Globe className="w-4 h-4 text-gray-400" />
+                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
               </a>
             </div>
           </motion.div>
@@ -170,9 +174,16 @@ export default function Footer() {
             <p className="text-xs text-gray-500">
               © {currentYear} Provincial Local Environment and Natural Resources Office — Misamis Oriental. All rights reserved.
             </p>
-            <p className="text-xs text-gray-600">
-              Provincial Government of Misamis Oriental
-            </p>
+            <div className="flex items-center gap-2">
+              <img
+                src="/images/logo.png"
+                alt="Misamis Oriental Logo"
+                className="w-5 h-5 object-contain"
+              />
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Provincial Government of Misamis Oriental
+              </p>
+            </div>
           </div>
         </div>
       </div>
