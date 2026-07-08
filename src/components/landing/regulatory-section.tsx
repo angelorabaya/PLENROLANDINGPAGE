@@ -5,12 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FileText, Truck, AlertTriangle, Search, ChevronDown } from 'lucide-react'
 
 const permitTypes = [
-  { name: 'Commercial Sand & Gravel', fee: '₱80.00', unit: 'cu.m.' },
-  { name: 'Industrial Sand & Gravel', fee: '₱100.00', unit: 'cu.m.' },
-  { name: 'Filling Materials', fee: '₱30.00', unit: 'cu.m.' },
-  { name: 'Ordinary Earth', fee: '₱15.00', unit: 'cu.m.' },
-  { name: 'Guano (Bat Manure)', fee: '₱200.00', unit: 'sack' },
-  { name: 'Gemstone', fee: '₱1,000.00', unit: 'kilo' },
+  { name: 'Commercial Sand and Gravel Permit (CSAG)', validity: '1 year' },
+  { name: 'Industrial Sand and Gravel Permit (ISAG)', validity: '5 years' },
+  { name: 'Special Waste Disposal Permit (SWDP)', validity: '6 months' },
+  { name: 'Quarry Permit (QP)', validity: '5 years' },
 ]
 
 const truckData = [
@@ -127,17 +125,17 @@ export default function RegulatorySection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: index * 0.08 }}
-                    className="rounded-xl p-5 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-shadow"
+                    className="rounded-xl p-5 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-shadow flex flex-col justify-between min-h-[140px]"
                   >
                     <p className="font-semibold text-gray-900 dark:text-white mb-3">
                       {permit.name}
                     </p>
-                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {permit.fee}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      per {permit.unit}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-auto">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Validity:</span>
+                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-lg">
+                        {permit.validity}
+                      </span>
+                    </div>
                   </motion.div>
                 ))}
               </div>
