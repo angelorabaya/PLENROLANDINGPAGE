@@ -70,7 +70,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-sm text-gray-400">plenro.misor@gmail.com</span>
+                <a href="mailto:emd.enromisor@gmail.com" className="text-sm text-gray-400 hover:text-emerald-400 transition-colors">emd.enromisor@gmail.com</a>
               </li>
               <li className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-emerald-400 shrink-0" />

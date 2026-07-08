@@ -82,9 +82,12 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Email Address</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    plenro.misor@gmail.com
-                  </p>
+                  <a 
+                    href="mailto:emd.enromisor@gmail.com"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors leading-relaxed"
+                  >
+                    emd.enromisor@gmail.com
+                  </a>
                 </div>
               </div>
 
