@@ -8,6 +8,7 @@ import ThemeToggle from './theme-toggle';
 
 const navLinks = [
   { label: 'Mandate', href: '#mandate' },
+  { label: 'Team', href: '#team' },
   { label: 'Regulations', href: '#regulatory-framework' },
   { label: 'News', href: '#news' },
   { label: 'Resources', href: '#resources' },

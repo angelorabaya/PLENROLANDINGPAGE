@@ -1,6 +1,7 @@
 import Navbar from "@/components/landing/navbar";
 import HeroSection from "@/components/landing/hero-section";
 import MandateSection from "@/components/landing/mandate-section";
+import TeamSection from "@/components/landing/team-section";
 import RegulatorySection from "@/components/landing/regulatory-section";
 import NewsSection from "@/components/landing/news-section";
 import ResourcesSection from "@/components/landing/resources-section";
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <MandateSection />
+      <TeamSection />
       <RegulatorySection />
       <NewsSection />
       <ResourcesSection />

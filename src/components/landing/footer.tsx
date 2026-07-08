@@ -92,6 +92,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { label: "Mandate & Role", href: "#mandate" },
+                { label: "Our Team", href: "#team" },
                 { label: "Regulatory Framework", href: "#regulatory-framework" },
                 { label: "Latest News", href: "#news" },
                 { label: "Public Resources", href: "#resources" },
