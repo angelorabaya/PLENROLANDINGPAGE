@@ -9,6 +9,8 @@ const permitTypes = [
   { name: 'Industrial Sand and Gravel Permit (ISAG)', validity: '5 years' },
   { name: 'Special Waste Disposal Permit (SWDP)', validity: '6 months' },
   { name: 'Quarry Permit (QP)', validity: '5 years' },
+  { name: 'Government Gratuitous Permit (GGP)', validity: '1 year' },
+  { name: 'Special Permit (EMP)', validity: '6 months' },
 ]
 
 const truckData = [
