@@ -12,6 +12,7 @@ const newsItems = [
     title: '2026 Small-Scale Mining Capacity Building',
     description:
       'A collaborative program between MGB-X and PLENRO providing Skills and Safety Training for miners in Opol and Manticao to enforce regulatory compliance inside Minahang Bayan areas.',
+    url: 'https://www.facebook.com/profile.php?id=61581984893275',
   },
   {
     image: '/images/checkpoint-enforcement.jpg',
@@ -21,6 +22,7 @@ const newsItems = [
     title: 'Joint Anti-Illegal Mining Enforcement',
     description:
       'Successful joint checkpoint operations with law enforcement to intercept unauthorized mineral ore shipments, including recent operations in Barangay Limonda, Opol.',
+    url: 'https://www.facebook.com/profile.php?id=61581984893275',
   },
   {
     image: '/images/bamboo-reforestation.jpg',
@@ -30,6 +32,7 @@ const newsItems = [
     title: 'Provincial Bamboo Reforestation Drive',
     description:
       'Orientation and planting programs in Gitagum and Libertad addressing environmental erosion while creating sustainable community livelihoods through bamboo cultivation.',
+    url: 'https://www.facebook.com/profile.php?id=61581984893275',
   },
   {
     image: '/images/ecotourism-coastal.jpg',
@@ -39,6 +42,7 @@ const newsItems = [
     title: 'Ecotourism & Coastal Management Realignment',
     description:
       'PLENRO partnership with DENR-10 to expand green ecotourism and streamline tenurial instruments for sustainable coastal development.',
+    url: 'https://www.facebook.com/profile.php?id=61581984893275',
   },
 ]
 
@@ -103,16 +107,39 @@ export default function NewsSection() {
                   {item.description}
                 </p>
                 <a
-                  href="#"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400 group-hover:gap-2 transition-all"
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                 >
-                  Read More
-                  <ArrowRight size={14} />
+                  Read on Facebook
+                  <ExternalLink size={14} className="ml-1" />
                 </a>
               </div>
             </motion.div>
           ))}
         </div>
+
+        {/* View All Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
+        >
+          <a
+            href="https://www.facebook.com/profile.php?id=61581984893275"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-semibold hover:scale-105 transition-all duration-300"
+          >
+            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            View All Activities on Facebook
+          </a>
+        </motion.div>
       </div>
     </section>
   )
