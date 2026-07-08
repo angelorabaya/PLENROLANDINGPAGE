@@ -85,12 +85,12 @@ export default function TeamSection() {
             
             {/* Image Container with Styled Borders */}
             <div className="relative overflow-hidden rounded-3xl border border-gray-250 dark:border-gray-700 shadow-xl group">
-              <div className="aspect-[4/3] relative">
+              <div className="aspect-[16/10] relative bg-gray-100 dark:bg-gray-850">
                 <Image
                   src="/images/staff.jpg"
                   alt="PLENRO Staff and Employees"
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-contain group-hover:scale-[1.02] transition-transform duration-700 ease-out"
                   sizes="(max-w-768px) 100vw, 50vw"
                   priority
                 />
