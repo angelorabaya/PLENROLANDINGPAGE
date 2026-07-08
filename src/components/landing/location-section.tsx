@@ -66,9 +66,12 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Phone Number</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    (088) 856-3355
-                  </p>
+                  <a 
+                    href="tel:09627484966"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors leading-relaxed"
+                  >
+                    09627484966
+                  </a>
                 </div>
               </div>
 
