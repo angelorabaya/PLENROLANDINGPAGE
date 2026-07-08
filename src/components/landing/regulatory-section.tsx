@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Truck, AlertTriangle, Search, ChevronDown } from 'lucide-react'
+import { FileText, Truck, AlertTriangle, Search } from 'lucide-react'
 
 const permitTypes = [
   { name: 'Commercial Sand and Gravel Permit (CSAG)', validity: '1 year' },
@@ -20,32 +20,24 @@ const truckData = [
   { type: 'Trailer Truck (12-Wheeler)', maxLoad: '15 cu.m.', fee: '₱30.00/cu.m.' },
 ]
 
-const complianceItems = [
-  {
-    title: 'Illegal Extraction or Quarrying',
-    content:
-      'Operating without a valid Special/Gratuitous Permit issued by PLENRO constitutes illegal extraction. Violators face confiscation of extracted materials, equipment seizure, and prosecution under provincial ordinance and national mining laws.',
-  },
-  {
-    title: 'Operating Without Delivery Receipts',
-    content:
-      'All transported quarry materials must be accompanied by valid Delivery Receipts from authorized permit holders. Vehicles caught without proper documentation are subject to impoundment, and materials confiscated per provincial regulatory guidelines.',
-  },
-  {
-    title: 'Exceeding Allowable Load Capacity',
-    content:
-      "Trucks exceeding the prescribed Maximum Allowable Load Capacity per vehicle type face fines and potential suspension of the quarry operator's permit. Refer to the Logistics Guidelines tab for specific limits.",
-  },
-  {
-    title: 'Failure to Pay Ecosystem Services Fee',
-    content:
-      'Quarry permit holders are mandated to remit a Three (3) Percent Ecosystem Services Fee from gross sales. Non-compliance may result in permit revocation and disqualification from future permit applications.',
-  },
-  {
-    title: 'Unauthorized Entry in Minahang Bayan Areas',
-    content:
-      'Only holders of valid Small-Scale Mining Permits (SSMPs) endorsed by the PMRB and PLENRO may conduct operations inside declared Minahang Bayan areas. Unauthorized entry is subject to immediate arrest and prosecution.',
-  },
+const finesData = [
+  { section: 'Section 37 (a)', fine: 'Late Submission of Report', charge: '₱2,000.00' },
+  { section: 'Section 37 (b)', fine: 'Non-Submission of Report (1 month from the prescribed period)', charge: '₱2,000.00' },
+  { section: 'Section 37 (c)', fine: 'Failure to carry "Delivery Receipts" on the transport of sand and gravel and other quarry resources', charge: '₱5,000.00' },
+  { section: 'Section 37 (d)', fine: 'Failure to carry "Ore Transport Permit" in the Transport/Delivery of Minerals', charge: '₱5,000.00' },
+  { section: 'Section 37 (e)', fine: 'Extraction and/or Hauling of Sand and Gravel and other Quarry Resources without Permit', charge: '₱500.00' },
+  { section: 'Section 37 (f)', fine: 'Extraction and/or Hauling of Minerals without Permit', charge: '₱1,500.00' },
+  { section: 'Section 37 (g)', fine: 'Any unregistered vehicle/equipment used in the extraction/hauling/transport of mineral resources', charge: '₱3,000.00' },
+  { section: 'Section 37 (h)', fine: 'Any Extraction and Removal or Sale of Materials Outside the Permit Area (Basic Fine)', charge: '₱5,000.00' },
+  { section: 'Section 37 (i)', fine: 'Late Filing of Application for Renewal of Permit', charge: '₱5,000.00' },
+  { section: 'Section 37 (j)', fine: 'Buying/Selling of Illegally-Sourced Quarry/Mineral Resource', charge: '₱5,000.00' },
+  { section: 'Section 37 (k)', fine: 'Buying/Selling/Recycling/Misused of Required Transport/Delivery/Hauling Documents', charge: '₱5,000.00' },
+  { section: 'Section 37 (l)', fine: 'Any Processor, Trader, Hauler, Dealer or Retailer Found to Process or Transport Quarry, Mineral Products and By-Products without required Governors Registration', charge: '₱5,000.00' },
+  { section: 'Section 37 (m)', fine: 'Any Person Who Refuses, Obstruct or Hampers Lawful Inspection of the Quarrying/Mining Areas, Stockpile or Any Premises where Quarrying/Mineral/Mineral Products and By-Products are being stored stockpiled or dumped', charge: '₱5,000.00' },
+  { section: 'Section 37 (n)', fine: 'Illegal Transport of Quarry/Mineral Resources imposable against the Owner and Driver of the Apprehended Trucks', charge: '₱5,000.00' },
+  { section: 'Section 37 (o)', fine: 'Over Extraction based on the volume and type of materials computed on actual (Basic Fine)', charge: '₱5,000.00' },
+  { section: 'Section 37 (p)', fine: 'Any transportation of processed mineral/mineral products without the required valid transport/hauling documents', charge: '₱5,000.00' },
+  { section: 'Section 36 (i)', fine: 'Allowable Loading Capacity per Truckload - Charges for Excess Load', charge: '₱500.00' },
 ]
 
 const tabs = [
@@ -59,7 +51,6 @@ type TabKey = (typeof tabs)[number]['key']
 export default function RegulatorySection() {
   const [activeTab, setActiveTab] = useState<TabKey>('permits')
   const [searchQuery, setSearchQuery] = useState('')
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const filteredTrucks = truckData.filter((truck) =>
     truck.type.toLowerCase().includes(searchQuery.toLowerCase())
@@ -226,49 +217,46 @@ export default function RegulatorySection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.3 }}
-              className="max-w-3xl mx-auto"
+              className="max-w-5xl mx-auto"
             >
-              {complianceItems.map((item, index) => {
-                const isOpen = openIndex === index
-                return (
-                  <div
-                    key={index}
-                    className="border border-gray-200/50 dark:border-gray-700/50 rounded-xl mb-3 overflow-hidden"
-                  >
-                    <button
-                      onClick={() => setOpenIndex(isOpen ? null : index)}
-                      className="w-full flex items-center justify-between p-4 text-left"
-                    >
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                        <span className="font-medium text-gray-900 dark:text-white text-sm">
-                          {item.title}
-                        </span>
-                      </div>
-                      <ChevronDown
-                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25, ease: 'easeInOut' }}
-                          className="overflow-hidden"
+              <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
+                      <tr>
+                        <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Fines
+                        </th>
+                        <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Charge
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {finesData.map((item, index) => (
+                        <tr
+                          key={index}
+                          className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                         >
-                          <p className="p-4 pt-0 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                            {item.content}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )
-              })}
+                          <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                            <div className="flex flex-col md:flex-row md:items-center gap-2">
+                              <span className="inline-block px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-650 dark:text-gray-400 w-fit shrink-0">
+                                {item.section}
+                              </span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">
+                                {item.fine}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right text-red-600 dark:text-red-400 font-semibold whitespace-nowrap">
+                            {item.charge}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
