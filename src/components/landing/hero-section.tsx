@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, Variants } from 'framer-motion'
-import { MapPin, ChevronDown, Download } from 'lucide-react'
+import { MapPin, ChevronDown } from 'lucide-react'
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -160,16 +160,6 @@ export default function HeroSection() {
           >
             View Regulatory Framework
             <ChevronDown size={18} />
-          </a>
-
-          {/* Secondary CTA */}
-          <a
-            href="/PLENRO ORDINANCE.docx"
-            download
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border-2 border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-semibold hover:bg-emerald-500/10 transition-all duration-300"
-          >
-            Download Official Ordinance
-            <Download size={18} />
           </a>
         </motion.div>
 

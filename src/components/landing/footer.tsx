@@ -95,7 +95,6 @@ export default function Footer() {
                 { label: "Regulatory Framework", href: "#regulatory-framework" },
                 { label: "Latest News", href: "#news" },
                 { label: "Public Resources", href: "#resources" },
-                { label: "Download Ordinance", href: "/PLENRO ORDINANCE.docx" },
               ].map((link) => (
                 <li key={link.label}>
                   <a

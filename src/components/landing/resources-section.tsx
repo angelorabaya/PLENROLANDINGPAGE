@@ -53,25 +53,6 @@ export default function ResourcesSection() {
               Official Documents
             </h3>
 
-            {/* Featured Download Card */}
-            <div className="rounded-2xl p-6 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 mb-4">
-              <FileText size={32} className="text-emerald-500 mb-4" />
-              <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
-                PLENRO Ordinance
-              </h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
-                Complete provincial ordinance governing quarry operations, permit fees, regulatory framework, and environmental compliance requirements.
-              </p>
-              <a
-                href="/PLENRO ORDINANCE.docx"
-                download
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors w-fit"
-              >
-                <Download size={18} />
-                Download Document
-              </a>
-            </div>
-
             {/* Additional Downloads */}
             <div>
               {additionalDownloads.map((item, index) => (
