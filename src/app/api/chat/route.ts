@@ -1,21 +1,15 @@
 export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-// Import the helper to grab Cloudflare's runtime environment
-import { getOptionalRequestContext } from '@cloudflare/next-on-pages';
 
 export async function POST(req: Request) {
   try {
     const { message, conversationId } = await req.json();
 
-    // 1. Get the Cloudflare runtime context if it exists
-    const cloudflareContext = getOptionalRequestContext();
-    
-    // 2. Fall back to process.env if running locally, otherwise use Cloudflare bindings
-    const apiKey = cloudflareContext?.env?.DIFY_API_KEY || process.env.DIFY_API_KEY;
-    const apiUrl = cloudflareContext?.env?.DIFY_API_URL || process.env.DIFY_API_URL;
+    // Native environment lookups (no external packages required)
+    const apiKey = process.env.DIFY_API_KEY;
+    const apiUrl = process.env.DIFY_API_URL;
 
-    // Safety check to ensure the route isn't running blind
     if (!apiKey || !apiUrl) {
       throw new Error('Dify API credentials are missing from the current environment.');
     }
