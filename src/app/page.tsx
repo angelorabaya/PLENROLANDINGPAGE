@@ -7,6 +7,7 @@ import NewsSection from "@/components/landing/news-section";
 import ResourcesSection from "@/components/landing/resources-section";
 import LocationSection from "@/components/landing/location-section";
 import Footer from "@/components/landing/footer";
+import OrdinanceChat from "@/components/landing/ordinance-chat";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <ResourcesSection />
       <LocationSection />
       <Footer />
+      <OrdinanceChat />
     </main>
   );
 }

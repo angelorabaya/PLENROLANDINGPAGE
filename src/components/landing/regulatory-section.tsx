@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Truck, AlertTriangle, Search } from 'lucide-react'
+import { FileText, Truck, AlertTriangle } from 'lucide-react'
 
 const permitTypes = [
   { name: 'Commercial Sand and Gravel Permit (CSAG)', validity: '1 year' },
@@ -13,11 +13,20 @@ const permitTypes = [
   { name: 'Special Permit (EMP)', validity: '6 months' },
 ]
 
-const truckData = [
-  { type: 'Elf Truck (4-Wheeler)', maxLoad: '5 cu.m.', fee: '₱30.00/cu.m.' },
-  { type: 'Forward Truck (6-Wheeler)', maxLoad: '7 cu.m.', fee: '₱30.00/cu.m.' },
-  { type: 'Dump Truck (10-Wheeler)', maxLoad: '12 cu.m.', fee: '₱30.00/cu.m.' },
-  { type: 'Trailer Truck (12-Wheeler)', maxLoad: '15 cu.m.', fee: '₱30.00/cu.m.' },
+const registrationFeesData = [
+  { particular: 'Allowable Loading Capacity per Truckload', fee: '14 cu.m.' },
+  { particular: 'Charges for Excess Load', fee: '₱500.00/cu.m.' },
+  { particular: 'Payment for Vehicle Stickers', fee: '₱150.00' },
+  { particular: 'Trucks with 10 to 14 Cubic Meters Maximum Capacity', fee: '₱850.00/Unit/Year' },
+  { particular: 'Trucks with 7 to 9 Cubic Meters Capacity', fee: '₱750.00/Unit/Year' },
+  { particular: 'Trucks with 5 to 9 Cubic Meters Maximum Capacity', fee: '₱500.00/Unit/Year' },
+  { particular: 'Trucks/Vehicle with Below 5 Cubic Meters Maximum Capacity', fee: '₱300.00/Unit/Year' },
+  { particular: 'Pay Loader', fee: '₱5,000.00/Unit/Year' },
+  { particular: 'Bulldozer', fee: '₱5,000.00/Unit/Year' },
+  { particular: 'Backhoe', fee: '₱5,000.00/Unit/Year' },
+  { particular: 'Crane', fee: '₱5,000.00/Unit/Year' },
+  { particular: 'Aggregates Crusher and/or Separator', fee: '₱5,000.00/Unit/Year' },
+  { particular: 'Limestone Crusher and/or Pulverizer', fee: '₱2,500.00/Unit/Year' },
 ]
 
 const finesData = [
@@ -42,7 +51,7 @@ const finesData = [
 
 const tabs = [
   { key: 'permits', label: 'Permit Types', icon: FileText },
-  { key: 'logistics', label: 'Logistics Guidelines', icon: Truck },
+  { key: 'logistics', label: 'Vehicle and Equipment Registration Fee', icon: Truck },
   { key: 'compliance', label: 'Fines & Compliance', icon: AlertTriangle },
 ] as const
 
@@ -50,11 +59,6 @@ type TabKey = (typeof tabs)[number]['key']
 
 export default function RegulatorySection() {
   const [activeTab, setActiveTab] = useState<TabKey>('permits')
-  const [searchQuery, setSearchQuery] = useState('')
-
-  const filteredTrucks = truckData.filter((truck) =>
-    truck.type.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   return (
     <section
@@ -79,7 +83,7 @@ export default function RegulatorySection() {
         </motion.div>
 
         {/* Tab Bar */}
-        <div className="flex gap-1 p-1 rounded-xl bg-gray-100 dark:bg-gray-800 max-w-lg mx-auto mb-8">
+        <div className="flex gap-1 p-1 rounded-xl bg-gray-100 dark:bg-gray-800 max-w-2xl mx-auto mb-8">
           {tabs.map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.key
@@ -144,68 +148,40 @@ export default function RegulatorySection() {
               transition={{ duration: 0.3 }}
               className="max-w-4xl mx-auto"
             >
-              {/* Search Input */}
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 mb-6 max-w-sm">
-                <Search className="w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search truck type..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400"
-                />
-              </div>
-
               {/* Table */}
               <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
                 <table className="w-full">
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
                       <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Truck Type
+                        Particulars / Vehicle & Equipment Type
                       </th>
-                      <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Max Load (cu.m.)
-                      </th>
-                      <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Regulatory Fee
+                      <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Registration Fee / Rate
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredTrucks.map((truck) => (
+                    {registrationFeesData.map((item, index) => (
                       <tr
-                        key={truck.type}
+                        key={index}
                         className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                       >
                         <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                          {truck.type}
+                          {item.particular}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                          {truck.maxLoad}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
-                          {truck.fee}
+                        <td className="px-6 py-4 text-sm text-right text-emerald-600 dark:text-emerald-400 font-semibold whitespace-nowrap">
+                          {item.fee}
                         </td>
                       </tr>
                     ))}
-                    {filteredTrucks.length === 0 && (
-                      <tr>
-                        <td
-                          colSpan={3}
-                          className="px-6 py-8 text-center text-sm text-gray-400"
-                        >
-                          No truck types match your search.
-                        </td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Note */}
               <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center leading-relaxed">
-                All shipments require valid Delivery Receipts from authorized quarry permit holders. Basic regulatory fee of ₱30.00 per cubic meter applies universally.
+                All vehicles hauling or transporting quarry resources must be registered and carry valid vehicle stickers.
               </p>
             </motion.div>
           )}
