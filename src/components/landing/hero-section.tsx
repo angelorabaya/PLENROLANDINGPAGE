@@ -140,7 +140,7 @@ export default function HeroSection() {
 
         {/* Description */}
         <motion.p
-          className="max-w-2xl text-center text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed mt-6"
+          className="max-w-2xl text-center text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mt-6"
           variants={itemVariants}
         >
           Dedicated to the protection, conservation, and sustainable management of the

@@ -61,7 +61,7 @@ export default function TeamSection() {
                       <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
                         {feature.title}
                       </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 leading-relaxed">
+                      <p className="text-gray-600 dark:text-gray-400 text-xs mt-0.5 leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -84,8 +84,8 @@ export default function TeamSection() {
             <div className="absolute -bottom-4 -right-4 w-72 h-72 bg-teal-500/10 dark:bg-teal-500/5 rounded-full filter blur-3xl -z-10" />
             
             {/* Image Container with Styled Borders */}
-            <div className="relative overflow-hidden rounded-3xl border border-gray-250 dark:border-gray-700 shadow-xl group">
-              <div className="aspect-[16/10] relative bg-gray-100 dark:bg-gray-850">
+            <div className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-700 shadow-xl group">
+              <div className="aspect-[16/10] relative bg-gray-100 dark:bg-gray-800">
                 <Image
                   src="/images/staff.jpg"
                   alt="PLENRO Staff and Employees"

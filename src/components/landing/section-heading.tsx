@@ -25,7 +25,7 @@ export default function SectionHeading({ title, subtitle, id }: SectionHeadingPr
         {title}
       </h2>
 
-      <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
         {subtitle}
       </p>
     </motion.div>

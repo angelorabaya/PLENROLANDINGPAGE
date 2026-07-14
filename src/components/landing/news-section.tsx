@@ -38,7 +38,7 @@ export default function NewsSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Latest Activities &amp; Implementations
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Stay updated with our real-world programs driving regulatory compliance, environmental protection, and community development.
           </p>
         </motion.div>
@@ -64,7 +64,7 @@ export default function NewsSection() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">
+              <h4 className="font-semibold text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Key Initiatives
               </h4>
               <div className="grid gap-4">
@@ -77,7 +77,7 @@ export default function NewsSection() {
                       <h5 className="font-semibold text-sm text-gray-900 dark:text-white">
                         {act.title}
                       </h5>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                         {act.description}
                       </p>
                     </div>

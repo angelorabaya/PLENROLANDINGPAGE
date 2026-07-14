@@ -13,7 +13,7 @@ export default function MandateSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Our Mandate &amp; Role
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
             Guiding policies, missions, and core operational roles of the Provincial Local Environment and Natural Resources Office.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function MandateSection() {
 
         {/* Roles Heading */}
         <div className="text-center mt-16 mb-8">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+          <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
             Core Operational Roles
           </h3>
         </div>
@@ -90,7 +90,7 @@ export default function MandateSection() {
             <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
               PMRB Secretariat
             </h4>
-            <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
               Serving as the official Secretariat for the Provincial Mining Regulatory Board (PMRB).
             </p>
           </motion.div>
@@ -109,7 +109,7 @@ export default function MandateSection() {
             <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
               Quarry Regulations
             </h4>
-            <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
               Regulation, inspection, supervision, and monitoring of quarry operations.
             </p>
           </motion.div>
@@ -128,7 +128,7 @@ export default function MandateSection() {
             <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
               Eco-Conservation
             </h4>
-            <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
               Environmental conservation, ecosystem research, and ecological restoration of quarry sites using Ecosystem Services Fees.
             </p>
           </motion.div>

@@ -28,7 +28,7 @@ export default function LocationSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Office Location &amp; Contact
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Visit our office or get in touch with our team for permit assistance and regulatory queries.
           </p>
         </motion.div>
@@ -51,7 +51,7 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Office Address</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     Ground Floor MISORTEL Building,<br />
                     A. Luna St., Cagayan de Oro City,<br />
                     Misamis Oriental, Philippines
@@ -68,7 +68,7 @@ export default function LocationSection() {
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Phone Number</h4>
                   <a 
                     href="tel:09627484966"
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors leading-relaxed"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors leading-relaxed"
                   >
                     09627484966
                   </a>
@@ -84,7 +84,7 @@ export default function LocationSection() {
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Email Address</h4>
                   <a 
                     href="mailto:emd.enromisor@gmail.com"
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors leading-relaxed"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors leading-relaxed"
                   >
                     emd.enromisor@gmail.com
                   </a>
@@ -98,7 +98,7 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Office Hours</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     Monday to Friday<br />
                     8:00 AM – 5:00 PM (except holidays)
                   </p>

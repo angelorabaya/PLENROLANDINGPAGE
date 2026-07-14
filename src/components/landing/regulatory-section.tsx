@@ -73,7 +73,7 @@ export default function RegulatorySection() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Regulatory Framework & Fees
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
             Public transparency portal — Access permit fees, logistics guidelines, and compliance requirements.
           </p>
         </motion.div>
@@ -90,7 +90,7 @@ export default function RegulatorySection() {
                 className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
                   isActive
                     ? 'bg-white dark:bg-gray-700 shadow-sm text-emerald-600'
-                    : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -124,7 +124,7 @@ export default function RegulatorySection() {
                       {permit.name}
                     </p>
                     <div className="flex items-center gap-1.5 mt-auto">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Validity:</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Validity:</span>
                       <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-lg">
                         {permit.validity}
                       </span>
@@ -204,7 +204,7 @@ export default function RegulatorySection() {
               </div>
 
               {/* Note */}
-              <p className="mt-4 text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed">
+              <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center leading-relaxed">
                 All shipments require valid Delivery Receipts from authorized quarry permit holders. Basic regulatory fee of ₱30.00 per cubic meter applies universally.
               </p>
             </motion.div>
@@ -240,7 +240,7 @@ export default function RegulatorySection() {
                         >
                           <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
                             <div className="flex flex-col md:flex-row md:items-center gap-2">
-                              <span className="inline-block px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-650 dark:text-gray-400 w-fit shrink-0">
+                              <span className="inline-block px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-400 w-fit shrink-0">
                                 {item.section}
                               </span>
                               <span className="text-gray-700 dark:text-gray-300 font-medium">
