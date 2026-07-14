@@ -1,24 +1,36 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Download, FileText, CheckCircle, ExternalLink } from 'lucide-react'
+import { Download, FileText } from 'lucide-react'
 
 const additionalDownloads = [
-  'Delivery Receipt Template',
-  'Permit Application Form',
-  'Quarry Operation Guidelines',
+  {
+    name: 'Requirements and Process Flow for New Application for Industrial and Commercial Sand and Gravel Permit',
+    url: '/sag.pdf',
+  },
+  {
+    name: 'Requirements and Process Flow for New Application for Quarry Permit',
+    url: '/quarry.pdf',
+  },
+  {
+    name: 'Requirements and Process Flow for Renewal Application of Quarry Permit, Commercial Sand and Industrial Sand and Gravel Permit',
+    url: '/renewal.pdf',
+  },
+  {
+    name: 'Application for Registration of Dealer, Trader or Retailer of Sand, Gravel, Other Quarry Resources, Its Products and By-Products',
+    url: '/trader.pdf',
+  },
+  {
+    name: 'Private Gratuitous Permit Application',
+    url: '/privategratuitous.pdf',
+  },
+  {
+    name: 'Requirements for Government Gratuitous Permit Application',
+    url: '/publicgratuitous.pdf',
+  },
 ]
 
-const requirements = [
-  'Letter of Intent addressed to the Provincial Governor',
-  'Sketch Plan / Location Map of the quarry site',
-  'Barangay Certification / Resolution of No Objection',
-  'Municipal/City Endorsement or Certification',
-  'EMB Environmental Compliance Certificate (ECC) or Certificate of Non-Coverage (CNC)',
-  'Proof of land ownership or consent from landowner',
-  'Community Tax Certificate (Cedula)',
-  'DTI/SEC Business Registration',
-]
+
 
 export default function ResourcesSection() {
   return (
@@ -36,59 +48,39 @@ export default function ResourcesSection() {
             Public Resources &amp; Downloads
           </h2>
           <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-            Access official documents, permits requirements, and regulatory guidelines.
+            Access official documents and regulatory guidelines.
           </p>
         </motion.div>
 
-        {/* Two Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Downloads */}
+        {/* Centered Column - Downloads */}
+        <div className="max-w-2xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h3 className="font-semibold text-xl text-gray-900 dark:text-white mb-4">
+            <h3 className="font-semibold text-xl text-gray-900 dark:text-white mb-4 text-center">
               Official Documents
             </h3>
 
             {/* Additional Downloads */}
-            <div>
+            <div className="rounded-2xl p-4 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50">
               {additionalDownloads.map((item, index) => (
                 <a
                   key={index}
-                  href="#"
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-700/50"
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                    index !== additionalDownloads.length - 1 ? 'border-b border-gray-100 dark:border-gray-700/50' : ''
+                  }`}
                 >
                   <FileText size={18} className="text-gray-400 shrink-0" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{item}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.name}</span>
                   <Download size={14} className="text-gray-300 ml-auto shrink-0" />
                 </a>
               ))}
-            </div>
-          </motion.div>
-
-          {/* Right Column - Requirements Checklist */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h3 className="font-semibold text-xl text-gray-900 dark:text-white mb-4">
-              Special Permit Requirements
-            </h3>
-
-            <div className="rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50">
-              <div className="space-y-1">
-                {requirements.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">{item}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </motion.div>
         </div>
