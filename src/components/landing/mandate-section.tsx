@@ -9,11 +9,11 @@ export default function MandateSection() {
       <div className="max-w-6xl mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-16">
-          <div className="w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mx-auto mb-6" />
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 rounded-full mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gray-900 dark:text-white mb-4">
             Our Mandate &amp; Role
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base font-medium">
             Guiding policies, missions, and core operational roles of the Provincial Local Environment and Natural Resources Office.
           </p>
         </div>
@@ -26,7 +26,7 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="border-beam-container hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500"
+            className="border-beam-container hover:shadow-2xl hover:shadow-emerald-500/10 hover:scale-[1.01] hover:border-emerald-500/30 dark:hover:border-emerald-500/20 active:scale-[0.99] transition-all duration-500"
           >
             <div className="border-beam-light" />
             <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
@@ -34,10 +34,10 @@ export default function MandateSection() {
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6 relative z-10">
                 <Eye className="text-emerald-600 dark:text-emerald-400" size={24} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
+              <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500">
                 Vision
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10 font-medium">
                 To develop the upland and coastal areas through shared responsibilities and open up window of livelihood opportunities to the people of Misamis Oriental focusing on responsible utilizations of natural resources and adaptation by all stakeholders of the environment policies and programs towards sustainable development.
               </p>
             </div>
@@ -49,7 +49,7 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="border-beam-container hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-500"
+            className="border-beam-container hover:shadow-2xl hover:shadow-teal-500/10 hover:scale-[1.01] hover:border-teal-500/30 dark:hover:border-teal-500/20 active:scale-[0.99] transition-all duration-500"
           >
             <div className="border-beam-light" />
             <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
@@ -57,10 +57,10 @@ export default function MandateSection() {
               <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center mb-6 relative z-10">
                 <Target className="text-teal-600 dark:text-teal-400" size={24} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-500">
+              <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-500 to-amber-500">
                 Mission
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base relative z-10 font-medium">
                 &ldquo;A pro-active&rdquo; PLENRO upholds the advocacies for healthy environment with sustainable development and responsible utilization of natural resources in Misamis Oriental.
               </p>
             </div>
@@ -69,7 +69,7 @@ export default function MandateSection() {
 
         {/* Roles Heading */}
         <div className="text-center mt-16 mb-8">
-          <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+          <h3 className="text-xs font-display font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
             Core Operational Roles
           </h3>
         </div>
@@ -82,15 +82,15 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
               <Landmark className="text-emerald-600 dark:text-emerald-400" size={20} />
             </div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
+            <h4 className="font-display font-bold text-gray-900 dark:text-white mb-2 text-sm">
               PMRB Secretariat
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed font-medium">
               Serving as the official Secretariat for the Provincial Mining Regulatory Board (PMRB).
             </p>
           </motion.div>
@@ -101,15 +101,15 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-teal-500/5 hover:border-teal-500/30 dark:hover:border-teal-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
             <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-4">
               <ShieldCheck className="text-teal-600 dark:text-teal-400" size={20} />
             </div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
+            <h4 className="font-display font-bold text-gray-900 dark:text-white mb-2 text-sm">
               Quarry Regulations
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed font-medium">
               Regulation, inspection, supervision, and monitoring of quarry operations.
             </p>
           </motion.div>
@@ -120,15 +120,15 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/30 dark:hover:border-amber-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4">
-              <TreePine className="text-cyan-600 dark:text-cyan-400" size={20} />
+            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+              <TreePine className="text-amber-600 dark:text-amber-400" size={20} />
             </div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
+            <h4 className="font-display font-bold text-gray-900 dark:text-white mb-2 text-sm">
               Eco-Conservation
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed font-medium">
               Environmental conservation, ecosystem research, and ecological restoration of quarry sites using Ecosystem Services Fees.
             </p>
           </motion.div>

@@ -35,10 +35,11 @@ export default function NewsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 rounded-full mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gray-900 dark:text-white mb-4">
             Latest Activities &amp; Implementations
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base font-medium">
             Stay updated with our real-world programs driving regulatory compliance, environmental protection, and community development.
           </p>
         </motion.div>
@@ -55,34 +56,42 @@ export default function NewsSection() {
             className="lg:col-span-5 space-y-8"
           >
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white animate-fade-in">
+              <h3 className="text-2xl font-display font-bold tracking-tight text-gray-900 dark:text-white">
                 Live updates directly from the field
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm md:text-base">
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm md:text-base font-medium">
                 We regularly post updates, regulatory announcements, and field implementation photos on our official Facebook Page. Check the live feed on the right to see our latest works.
               </p>
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <h4 className="font-display font-bold text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest">
                 Key Initiatives
               </h4>
               <div className="grid gap-4">
-                {keyActivities.map((act, index) => (
-                  <div key={index} className="flex gap-3 p-4 rounded-xl bg-white dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <CheckSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                {keyActivities.map((act, index) => {
+                  const isGold = index % 2 === 1;
+                  return (
+                    <div 
+                      key={index} 
+                      className="flex gap-3 p-4 rounded-xl bg-white dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/20 dark:hover:border-emerald-500/10 hover:scale-[1.02] active:scale-[0.99] transition-all duration-300"
+                    >
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+                        isGold ? 'bg-amber-500/10' : 'bg-emerald-500/10'
+                      }`}>
+                        <CheckSquare className={`w-4 h-4 ${isGold ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                      </div>
+                      <div>
+                        <h5 className="font-display font-semibold text-sm text-gray-900 dark:text-white">
+                          {act.title}
+                        </h5>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed font-medium">
+                          {act.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h5 className="font-semibold text-sm text-gray-900 dark:text-white">
-                        {act.title}
-                      </h5>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
-                        {act.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -91,7 +100,7 @@ export default function NewsSection() {
                 href="https://www.facebook.com/profile.php?id=61581984893275"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors shadow-lg shadow-blue-500/20 text-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 hover:scale-105 active:scale-95 text-sm cursor-pointer"
               >
                 Follow our Facebook Page
                 <ExternalLink size={16} />

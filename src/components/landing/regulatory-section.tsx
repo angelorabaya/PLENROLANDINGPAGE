@@ -74,10 +74,11 @@ export default function RegulatorySection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Regulatory Framework & Fees
+          <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 rounded-full mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+            Regulatory Framework &amp; Fees
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base font-medium">
             Public transparency portal — Access permit fees, logistics guidelines, and compliance requirements.
           </p>
         </motion.div>
@@ -91,9 +92,9 @@ export default function RegulatorySection() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   isActive
-                    ? 'bg-white dark:bg-gray-700 shadow-sm text-emerald-600'
+                    ? 'bg-white dark:bg-gray-700 shadow-md text-emerald-600 dark:text-emerald-400 font-bold'
                     : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
@@ -122,14 +123,18 @@ export default function RegulatorySection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: index * 0.08 }}
-                    className="rounded-xl p-5 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-shadow flex flex-col justify-between min-h-[140px]"
+                    className="rounded-xl p-5 bg-white dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/35 dark:hover:border-emerald-500/25 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300 flex flex-col justify-between min-h-[140px]"
                   >
-                    <p className="font-semibold text-gray-900 dark:text-white mb-3">
+                    <p className="font-display font-bold text-gray-900 dark:text-white mb-3 text-base">
                       {permit.name}
                     </p>
                     <div className="flex items-center gap-1.5 mt-auto">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Validity:</span>
-                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-lg">
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Validity:</span>
+                      <span className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
+                        permit.validity.includes('5')
+                          ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20'
+                          : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20'
+                      }`}>
                         {permit.validity}
                       </span>
                     </div>

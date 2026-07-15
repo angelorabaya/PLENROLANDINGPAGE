@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, Variants } from 'framer-motion'
+import { motion, Variants, useScroll, useTransform } from 'framer-motion'
 import { MapPin, ChevronDown } from 'lucide-react'
 
 const containerVariants: Variants = {
@@ -23,13 +23,17 @@ const itemVariants: Variants = {
 }
 
 export default function HeroSection() {
+  const { scrollY } = useScroll();
+  const yBg = useTransform(scrollY, [0, 500], [0, 150]);
+
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
-      {/* Background Layer 1: Hero landscape image */}
-      <img
+      {/* Background Layer 1: Hero landscape image with parallax */}
+      <motion.img
         src="/images/hero-landscape.jpg"
         alt="Hero landscape"
-        className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10"
+        style={{ y: yBg }}
+        className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10 pointer-events-none"
       />
 
       {/* Background Layer 2: Dark overlay gradient */}
@@ -58,6 +62,20 @@ export default function HeroSection() {
         }}
         transition={{
           duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      {/* Amber/Gold Accent Aurora Blob (A10) */}
+      <motion.div
+        className="absolute w-[26rem] h-[26rem] rounded-full bg-amber-500/15 dark:bg-amber-500/10 blur-3xl"
+        style={{ top: '15%', left: '45%' }}
+        animate={{
+          x: [0, -50, 70, -30, 0],
+          y: [0, 60, -40, 50, 0],
+        }}
+        transition={{
+          duration: 13,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
@@ -112,7 +130,7 @@ export default function HeroSection() {
 
         {/* Title */}
         <motion.h1
-          className="text-6xl md:text-8xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent"
+          className="text-6xl md:text-8xl font-display font-bold tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 bg-clip-text text-transparent"
           variants={itemVariants}
         >
           PLENRO
@@ -128,7 +146,7 @@ export default function HeroSection() {
 
         {/* Badge */}
         <motion.div variants={itemVariants}>
-          <span className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm">
+          <span className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium">
             <img
               src="/images/logo.png"
               alt="Misamis Oriental Logo"
@@ -156,10 +174,18 @@ export default function HeroSection() {
           {/* Primary CTA */}
           <a
             href="#regulatory-framework"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
           >
             View Regulatory Framework
             <ChevronDown size={18} />
+          </a>
+
+          {/* Secondary CTA */}
+          <a
+            href="#resources"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800 font-semibold shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/30 hover:text-amber-600 dark:hover:text-amber-400 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+          >
+            Download Permit Forms
           </a>
         </motion.div>
 
