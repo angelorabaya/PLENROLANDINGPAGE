@@ -11,6 +11,7 @@ export default function OrdinanceChat() {
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot'; text: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -29,8 +30,20 @@ export default function OrdinanceChat() {
     e.preventDefault();
     if (!message.trim() || loading) return;
 
-    setError(null);
+    // Reject immediately if the honeypot field is filled (bot activity)
+    if (honeypot) {
+      setMessage('');
+      setHoneypot('');
+      return;
+    }
+
     const queryToSend = message.trim();
+    if (queryToSend.length > 500) {
+      setError('Message cannot exceed 500 characters.');
+      return;
+    }
+
+    setError(null);
     setMessage('');
     
     // Add user message to history
@@ -41,7 +54,7 @@ export default function OrdinanceChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: queryToSend, conversationId }),
+        body: JSON.stringify({ message: queryToSend, conversationId, website: honeypot }),
       });
 
       if (!res.ok) {
@@ -218,6 +231,17 @@ export default function OrdinanceChat() {
 
             {/* Input Form Footer */}
             <form onSubmit={handleSend} className="p-3 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center gap-2">
+              {/* Honeypot field (hidden visually and from assistive technologies) */}
+              <div className="absolute opacity-0 pointer-events-none -z-10 w-0 h-0 overflow-hidden" aria-hidden="true">
+                <input
+                  type="text"
+                  name="website"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               <input
                 type="text"
                 value={message}
@@ -225,6 +249,7 @@ export default function OrdinanceChat() {
                 placeholder="Ask about legal codes, fines..."
                 className="flex-grow bg-gray-50 dark:bg-gray-950 px-4 py-2.5 rounded-xl text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-colors"
                 disabled={loading}
+                maxLength={500}
               />
               <button
                 type="submit"
