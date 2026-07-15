@@ -308,9 +308,9 @@ export default function OrdinanceChat() {
                           {/* Suggested Onboarding Questions (U5) */}
                           <div className="w-full max-w-[280px] space-y-2 pt-2">
                             {[
-                              "How do I apply for a quarry permit?",
-                              "What are the fines for excess loads?",
-                              "Where is the PLENRO office located?"
+                              "What is the tax rate on sand, gravel, and quarry materials?",
+                              "What are the fees for a Commercial Sand and Gravel Permit?",
+                              "What are the penalties for quarrying without a permit?"
                             ].map((suggestion, sIdx) => (
                               <button
                                 key={sIdx}
