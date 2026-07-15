@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, Variants, useScroll, useTransform } from 'framer-motion'
-import { MapPin, ChevronDown } from 'lucide-react'
+import { MapPin, ChevronDown, Download } from 'lucide-react'
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -183,9 +183,10 @@ export default function HeroSection() {
           {/* Secondary CTA */}
           <a
             href="#resources"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800 font-semibold shadow-sm hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/30 hover:text-amber-600 dark:hover:text-amber-400 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
           >
             Download Permit Forms
+            <Download size={18} />
           </a>
         </motion.div>
 
