@@ -31,7 +31,7 @@ const permitTypes: { name: string; validity: string; definition?: string }[] = [
   },
   {
     name: 'Private Gratuitous Permit (PGP)',
-    validity: '1 year',
+    validity: '2 months',
     definition:
       'Any landowner may apply for a Private Gratuitous Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and utilization of quarry, sand and gravel or loose/unconsolidated materials from his/her land for a non-renewable period of sixty (60) calendar days: Provided, That there is adequate proof of ownership and that the materials shall be for personal use.',
   },
