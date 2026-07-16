@@ -5,15 +5,36 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FileText, Truck, AlertTriangle, ChevronDown } from 'lucide-react'
 
 const permitTypes: { name: string; validity: string; definition?: string }[] = [
-  { name: 'Commercial Sand and Gravel Permit (CSAG)', validity: '1 year' },
-  { name: 'Industrial Sand and Gravel Permit (ISAG)', validity: '5 years' },
+  {
+    name: 'Commercial Sand and Gravel Permit (CSAG)',
+    validity: '1 year',
+    definition:
+      'Any Qualified Person may apply for a Commercial Sand and Gravel Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and disposition of sand and gravel and other loose or unconsolidated materials which are used in their natural state without undergoing processing covering an area of not more than five (5) hectares for a term of one (1) year from date of issuance thereof, renewable for like period and in such quantities as may be specified in the Permit: Provided, That only one (1) Permit shall be granted to a Qualified Person in a municipality at any one time under such terms and conditions as provided herein.',
+  },
+  {
+    name: 'Industrial Sand and Gravel Permit (ISAG)',
+    validity: '5 years',
+    definition:
+      'Any Qualified Person may apply for an Industrial Sand and Gravel Permit (MGB Form Nos. 8-1 or 8-1A and 8-2 or 8-2A) with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and disposition of sand and gravel and other loose or unconsolidated materials that necessitate the use of mechanical processing covering an area of not more than five (5) hectares at any one time for a term of five (5) years from date of issuance thereof, renewable for like periods but not to exceed a total term of twenty-five (25) years: Provided, That any Qualified Person may apply for an Industrial Sand and Gravel Permit with the Regional Director through the Regional Office for areas covering more than five (5) hectares but not to exceed twenty (20) hectares at any one time for a term of five (5) years from date of issuance thereof, renewable for like periods but not to exceed a total term of twenty-five (25) years: Provided, further, That only one (1) Permit shall be granted to a Qualified Person in a municipality at any one time under such terms and conditions as provided herein.',
+  },
   {
     name: 'Quarry Permit (QP)',
     validity: '5 years',
     definition:
       'Any Qualified Person may apply for a Quarry Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and disposition of quarry resources covering an area of not more than five (5) hectares, and a production rate of not more than fifty thousand (50,000) tons annually and/or whose project cost is not more than Ten Million Pesos (PhP10,000,000.00), for a term of five (5) years from the date of issuance thereof, renewable for like period but not to exceed a total term of twenty-five (25) years: Provided, That application for renewal shall be filed before the expiry date of the Permit: Provided, further, That the Permit Holder has complied with all the terms and conditions of the Permit as provided herein and has not been found guilty of violation of any provision of the Act and these implementing rules and regulations: Provided, furthermore, That no Quarry Permit shall be issued or granted on any area covered by a Mineral Agreement or FTAA, except on areas where a written consent is granted by the Mineral Agreement or FTAA Contractor: Provided, finally, That existing Quarry Permits at the effectivity of Department Administrative Order No. 99-57 under which the production rate is more than fifty thousand (50,000) tons annually and/or whose project cost is more than Ten Million Pesos (PhP10,000,000.00) shall not be renewed but shall be given preferential right to a Mineral Agreement application which shall be evaluated and approved in accordance with Chapter VI hereof and all other applicable provisions of the Act and these implementing rules and regulations.',
   },
-  { name: 'Government Gratuitous Permit (GGP)', validity: '1 year' },
+  {
+    name: 'Government Gratuitous Permit (GGP)',
+    validity: '1 year',
+    definition:
+      'Any Government entity/instrumentality in need of quarry, sand and gravel or loose/unconsolidated materials in the construction of building(s) and/or infrastructure for public use or other purposes may apply for a Government Gratuitous Permit (MGB Form No. 8-3B) with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for a period coterminous with the construction stage of the project but not to exceed one (1) year in public/private land(s) covering an area of not more than two (2) hectares. The applicant shall submit a project proposal stating where the materials to be taken shall be used and the estimated volume needed.',
+  },
+  {
+    name: 'Private Gratuitous Permit (PGP)',
+    validity: '1 year',
+    definition:
+      'Any landowner may apply for a Private Gratuitous Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and utilization of quarry, sand and gravel or loose/unconsolidated materials from his/her land for a non-renewable period of sixty (60) calendar days: Provided, That there is adequate proof of ownership and that the materials shall be for personal use.',
+  },
   { name: 'Special Permit (EMP)', validity: '6 months' },
 ]
 
@@ -169,7 +190,7 @@ export default function RegulatorySection() {
                             {permit.validity}
                           </span>
                           {hasDefinition && !isExpanded && (
-                            <span className="ml-auto text-xs text-emerald-600/60 dark:text-emerald-400/50 font-medium hidden sm:inline">
+                            <span className="ml-auto text-xs text-emerald-600/60 dark:text-emerald-400/50 font-medium">
                               Tap to learn more
                             </span>
                           )}
