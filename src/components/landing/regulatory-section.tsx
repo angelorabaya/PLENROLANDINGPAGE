@@ -35,7 +35,12 @@ const permitTypes: { name: string; validity: string; definition?: string }[] = [
     definition:
       'Any landowner may apply for a Private Gratuitous Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and utilization of quarry, sand and gravel or loose/unconsolidated materials from his/her land for a non-renewable period of sixty (60) calendar days: Provided, That there is adequate proof of ownership and that the materials shall be for personal use.',
   },
-  { name: 'Special Permit (EMP)', validity: '6 months' },
+  {
+    name: 'Special Permit (EMP)',
+    validity: '6 months',
+    definition:
+      'Any individual who wishes to develop his/her idle land into productive use, wherein, during the course of development, there is a need to extract and dispose of a specific volume of ordinary earth, limestone, sand and gravel, and other quarry materials therefrom, may apply for a Special Permit to Extract and Dispose (Earth Moving Permit) with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board. The permit is only valid for six (6) months from the date of issuance and is not renewable.',
+  },
 ]
 
 const registrationFeesData = [
