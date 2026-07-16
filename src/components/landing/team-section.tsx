@@ -99,22 +99,11 @@ export default function TeamSection() {
                     <span className="text-gray-400 dark:text-gray-500 text-xs italic font-semibold">Loading personnel photo...</span>
                   </div>
                 )}
-                {/* Blurred backdrop image for premium look */}
-                {isLoaded && (
-                  <Image
-                    src="/images/staff.jpg"
-                    alt=""
-                    fill
-                    className="object-cover blur-2xl opacity-50 dark:opacity-30 scale-110 pointer-events-none"
-                    sizes="(max-w-768px) 100vw, 50vw"
-                    priority
-                  />
-                )}
-                <Image
+                 <Image
                   src="/images/staff.jpg"
                   alt="PLENRO Staff and Employees"
                   fill
-                  className={`object-contain relative z-10 group-hover:scale-[1.02] transition-all duration-700 ease-out ${
+                  className={`object-cover group-hover:scale-[1.02] transition-all duration-700 ease-out ${
                     isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
                   }`}
                   sizes="(max-w-768px) 100vw, 50vw"
