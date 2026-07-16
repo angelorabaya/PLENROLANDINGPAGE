@@ -7,6 +7,7 @@ import { useTheme } from './theme-provider';
 import ThemeToggle from './theme-toggle';
 
 const navLinks = [
+  { label: 'Message', href: '#message' },
   { label: 'Mandate', href: '#mandate' },
   { label: 'Team', href: '#team' },
   { label: 'Regulations', href: '#regulatory-framework' },

@@ -1,5 +1,6 @@
 import Navbar from "@/components/landing/navbar";
 import HeroSection from "@/components/landing/hero-section";
+import DepartmentHeadMessage from "@/components/landing/department-head-message";
 import MandateSection from "@/components/landing/mandate-section";
 import TeamSection from "@/components/landing/team-section";
 import RegulatorySection from "@/components/landing/regulatory-section";
@@ -15,6 +16,7 @@ export default function Home() {
     <main className="flex-1">
       <Navbar />
       <HeroSection />
+      <DepartmentHeadMessage />
       <MandateSection />
       <TeamSection />
       <RegulatorySection />
