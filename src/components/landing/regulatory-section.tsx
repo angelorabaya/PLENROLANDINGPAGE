@@ -2,13 +2,17 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Truck, AlertTriangle } from 'lucide-react'
+import { FileText, Truck, AlertTriangle, ChevronDown } from 'lucide-react'
 
-const permitTypes = [
+const permitTypes: { name: string; validity: string; definition?: string }[] = [
   { name: 'Commercial Sand and Gravel Permit (CSAG)', validity: '1 year' },
   { name: 'Industrial Sand and Gravel Permit (ISAG)', validity: '5 years' },
-  { name: 'Special Waste Disposal Permit (SWDP)', validity: '6 months' },
-  { name: 'Quarry Permit (QP)', validity: '5 years' },
+  {
+    name: 'Quarry Permit (QP)',
+    validity: '5 years',
+    definition:
+      'Any Qualified Person may apply for a Quarry Permit with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board for the extraction, removal and disposition of quarry resources covering an area of not more than five (5) hectares, and a production rate of not more than fifty thousand (50,000) tons annually and/or whose project cost is not more than Ten Million Pesos (PhP10,000,000.00), for a term of five (5) years from the date of issuance thereof, renewable for like period but not to exceed a total term of twenty-five (25) years: Provided, That application for renewal shall be filed before the expiry date of the Permit: Provided, further, That the Permit Holder has complied with all the terms and conditions of the Permit as provided herein and has not been found guilty of violation of any provision of the Act and these implementing rules and regulations: Provided, furthermore, That no Quarry Permit shall be issued or granted on any area covered by a Mineral Agreement or FTAA, except on areas where a written consent is granted by the Mineral Agreement or FTAA Contractor: Provided, finally, That existing Quarry Permits at the effectivity of Department Administrative Order No. 99-57 under which the production rate is more than fifty thousand (50,000) tons annually and/or whose project cost is more than Ten Million Pesos (PhP10,000,000.00) shall not be renewed but shall be given preferential right to a Mineral Agreement application which shall be evaluated and approved in accordance with Chapter VI hereof and all other applicable provisions of the Act and these implementing rules and regulations.',
+  },
   { name: 'Government Gratuitous Permit (GGP)', validity: '1 year' },
   { name: 'Special Permit (EMP)', validity: '6 months' },
 ]
@@ -59,6 +63,7 @@ type TabKey = (typeof tabs)[number]['key']
 
 export default function RegulatorySection() {
   const [activeTab, setActiveTab] = useState<TabKey>('permits')
+  const [expandedPermit, setExpandedPermit] = useState<string | null>(null)
 
   return (
     <section
@@ -116,30 +121,87 @@ export default function RegulatorySection() {
               transition={{ duration: 0.3 }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-                {permitTypes.map((permit, index) => (
-                  <motion.div
-                    key={permit.name}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.08 }}
-                    className="rounded-xl p-5 bg-white dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/35 dark:hover:border-emerald-500/25 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300 flex flex-col justify-between min-h-[140px]"
-                  >
-                    <p className="font-display font-bold text-gray-900 dark:text-white mb-3 text-base">
-                      {permit.name}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-auto">
-                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Validity:</span>
-                      <span className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
-                        permit.validity.includes('5')
-                          ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20'
-                          : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20'
-                      }`}>
-                        {permit.validity}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
+                {permitTypes.map((permit, index) => {
+                  const isExpanded = expandedPermit === permit.name
+                  const hasDefinition = !!permit.definition
+
+                  return (
+                    <motion.div
+                      key={permit.name}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.08 }}
+                      layout
+                      className={`rounded-xl bg-white dark:bg-gray-800/40 border transition-all duration-300 ${
+                        isExpanded
+                          ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-xl shadow-emerald-500/5 md:col-span-2 lg:col-span-3'
+                          : 'border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/35 dark:hover:border-emerald-500/25 hover:scale-[1.03] active:scale-[0.99]'
+                      } ${hasDefinition ? 'cursor-pointer' : ''}`}
+                      onClick={() => {
+                        if (hasDefinition) {
+                          setExpandedPermit(isExpanded ? null : permit.name)
+                        }
+                      }}
+                    >
+                      <div className="p-5 flex flex-col justify-between min-h-[140px]">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="font-display font-bold text-gray-900 dark:text-white text-base">
+                            {permit.name}
+                          </p>
+                          {hasDefinition && (
+                            <motion.div
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="flex-shrink-0 mt-0.5"
+                            >
+                              <ChevronDown className="w-4.5 h-4.5 text-emerald-500 dark:text-emerald-400" />
+                            </motion.div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-auto pt-3">
+                          <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Validity:</span>
+                          <span className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
+                            permit.validity.includes('5')
+                              ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/20'
+                              : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20'
+                          }`}>
+                            {permit.validity}
+                          </span>
+                          {hasDefinition && !isExpanded && (
+                            <span className="ml-auto text-xs text-emerald-600/60 dark:text-emerald-400/50 font-medium hidden sm:inline">
+                              Tap to learn more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Expandable Definition */}
+                      <AnimatePresence>
+                        {isExpanded && permit.definition && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 pb-5">
+                              <div className="border-t border-gray-200/70 dark:border-gray-700/50 pt-4">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+                                  Definition
+                                </p>
+                                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                                  {permit.definition}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  )
+                })}
               </div>
             </motion.div>
           )}
