@@ -39,6 +39,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/images/plenro.png", type: "image/png" }
+    ],
+    apple: [
+      { url: "/images/plenro.png", type: "image/png" }
+    ]
+  },
   openGraph: {
     title: "PLENRO Misamis Oriental",
     description:
