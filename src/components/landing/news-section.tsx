@@ -24,7 +24,7 @@ const keyActivities = [
 
 export default function NewsSection() {
   return (
-    <section id="news" className="py-24 px-6 bg-gray-50/50 dark:bg-gray-900/50">
+    <section id="news" className="py-24 px-6 bg-white dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto">
         
         {/* Section Heading */}
@@ -119,7 +119,7 @@ export default function NewsSection() {
             <div className="w-full max-w-[500px] h-[600px] rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-xl bg-white dark:bg-gray-800 relative">
               
               {/* Dynamic Loading Indicator behind iframe */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/50 -z-10 text-gray-400 dark:text-gray-500 gap-2">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900/50 -z-10 text-gray-400 dark:text-gray-500 gap-2">
                 <MessageSquare className="w-8 h-8 animate-pulse text-emerald-500" />
                 <span className="text-xs">Loading Live Facebook Feed...</span>
               </div>

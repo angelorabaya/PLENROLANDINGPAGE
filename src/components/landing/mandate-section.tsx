@@ -5,7 +5,7 @@ import { Eye, Target, Landmark, ShieldCheck, TreePine } from 'lucide-react'
 
 export default function MandateSection() {
   return (
-    <section id="mandate" className="py-24 px-6 bg-gray-50/50 dark:bg-gray-900/50">
+    <section id="mandate" className="py-24 px-6 bg-white dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-16">
@@ -29,7 +29,7 @@ export default function MandateSection() {
             className="border-beam-container hover:shadow-2xl hover:shadow-emerald-500/10 hover:scale-[1.01] hover:border-emerald-500/30 dark:hover:border-emerald-500/20 active:scale-[0.99] transition-all duration-500"
           >
             <div className="border-beam-light" />
-            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
+            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700/50">
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/5 group-hover:bg-emerald-500/10 rounded-full blur-2xl transition-all duration-500" />
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6 relative z-10">
                 <Eye className="text-emerald-600 dark:text-emerald-400" size={24} />
@@ -52,7 +52,7 @@ export default function MandateSection() {
             className="border-beam-container hover:shadow-2xl hover:shadow-teal-500/10 hover:scale-[1.01] hover:border-teal-500/30 dark:hover:border-teal-500/20 active:scale-[0.99] transition-all duration-500"
           >
             <div className="border-beam-light" />
-            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50">
+            <div className="border-beam-content group p-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700/50">
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-teal-500/5 group-hover:bg-teal-500/10 rounded-full blur-2xl transition-all duration-500" />
               <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center mb-6 relative z-10">
                 <Target className="text-teal-600 dark:text-teal-400" size={24} />
@@ -82,7 +82,7 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
               <Landmark className="text-emerald-600 dark:text-emerald-400" size={20} />
@@ -101,7 +101,7 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-teal-500/5 hover:border-teal-500/30 dark:hover:border-teal-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-teal-500/5 hover:border-teal-500/30 dark:hover:border-teal-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
             <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center mb-4">
               <ShieldCheck className="text-teal-600 dark:text-teal-400" size={20} />
@@ -120,7 +120,7 @@ export default function MandateSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/30 dark:hover:border-amber-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/30 dark:hover:border-amber-500/20 hover:scale-[1.03] active:scale-[0.99] transition-all duration-300"
           >
             <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
               <TreePine className="text-amber-600 dark:text-amber-400" size={20} />

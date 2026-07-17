@@ -8,7 +8,7 @@ export default function LocationSection() {
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
   return (
-    <section id="contact" className="py-24 px-6 bg-gray-50/50 dark:bg-gray-900/50 relative overflow-hidden">
+    <section id="contact" className="py-24 px-6 bg-white dark:bg-gray-900/50 relative overflow-hidden">
       {/* Decorative Blur Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
@@ -68,7 +68,7 @@ export default function LocationSection() {
                   <h4 className="font-display font-bold text-gray-900 dark:text-white mb-1 text-base">Phone Number</h4>
                   <a 
                     href="tel:09627484966"
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-655 dark:hover:text-teal-400 transition-colors leading-relaxed font-semibold"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors leading-relaxed font-semibold"
                   >
                     09627484966
                   </a>
@@ -111,7 +111,7 @@ export default function LocationSection() {
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 lg:mt-0 flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-650 to-teal-600 hover:scale-105 active:scale-95 text-white font-semibold shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 transition-all duration-300 group cursor-pointer"
+              className="mt-6 lg:mt-0 flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-600 hover:scale-105 active:scale-95 text-white font-semibold shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 transition-all duration-300 group cursor-pointer"
             >
               <Navigation className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               Get Directions on Google Maps

@@ -27,7 +27,7 @@ export default function TeamSection() {
   const [isLoaded, setIsLoaded] = useState(false)
 
   return (
-    <section id="team" className="py-24 px-6 bg-gray-50 dark:bg-gray-900/50">
+    <section id="team" className="py-24 px-6 bg-white dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
@@ -91,7 +91,7 @@ export default function TeamSection() {
             
             {/* Image Container with Styled Borders */}
             <div className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-700 shadow-xl group">
-              <div className="aspect-[16/10] relative bg-gray-150 dark:bg-gray-800">
+              <div className="aspect-[16/10] relative bg-gray-100 dark:bg-gray-800">
                 {/* Skeleton Loading Placeholder (A6) */}
                 {!isLoaded && (
                   <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 animate-pulse flex flex-col items-center justify-center gap-2">

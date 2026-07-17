@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <footer id="contact" className="relative bg-gray-900 dark:bg-gray-950 text-white overflow-hidden">
       {/* Wave SVG Divider */}
-      <div className="w-full overflow-hidden leading-[0] bg-gray-50/50 dark:bg-gray-900/50">
+      <div className="w-full overflow-hidden leading-[0] bg-white dark:bg-gray-900/50">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-10 text-gray-900 dark:text-gray-950 fill-current">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C122.58,4.1,235.08,53.34,321.39,56.44Z"></path>
         </svg>

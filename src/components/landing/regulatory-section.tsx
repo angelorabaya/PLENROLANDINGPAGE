@@ -162,7 +162,7 @@ export default function RegulatorySection() {
                       className={`rounded-xl bg-white dark:bg-gray-800/40 border transition-all duration-300 ${
                         isExpanded
                           ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-xl shadow-emerald-500/5 md:col-span-2 lg:col-span-3'
-                          : 'border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/35 dark:hover:border-emerald-500/25 hover:scale-[1.03] active:scale-[0.99]'
+                          : 'border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/35 dark:hover:border-emerald-500/25 hover:scale-[1.03] active:scale-[0.99]'
                       } ${hasDefinition ? 'cursor-pointer' : ''}`}
                       onClick={() => {
                         if (hasDefinition) {

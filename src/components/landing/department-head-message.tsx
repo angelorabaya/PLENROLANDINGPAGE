@@ -145,7 +145,7 @@ export default function DepartmentHeadMessage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.1 * index }}
-                    className="group p-4 rounded-xl border border-gray-200/70 dark:border-gray-800/70 bg-gray-50/50 dark:bg-gray-900/50 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300"
+                    className="group p-4 rounded-xl border border-gray-200/70 dark:border-gray-800/70 bg-white dark:bg-gray-900/50 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300"
                   >
                     <div className="flex items-center gap-3 mb-2.5">
                       <div className="w-9 h-9 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/50 flex items-center justify-center shadow-sm group-hover:shadow-emerald-500/10 transition-all duration-300">

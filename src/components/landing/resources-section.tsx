@@ -81,12 +81,12 @@ export default function ResourcesSection() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-3.5 rounded-xl bg-gray-50/30 dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800/50 hover:bg-white dark:hover:bg-gray-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 group"
+                  className="flex items-center gap-4 p-3.5 rounded-xl bg-white dark:bg-gray-900/10 border border-gray-100 dark:border-gray-800/50 hover:bg-white dark:hover:bg-gray-800/50 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 group"
                 >
                   <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center group-hover:bg-amber-500/10 transition-all duration-300">
                     <FileText size={18} className="text-emerald-600 dark:text-emerald-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
                   </div>
-                  <span className="text-sm text-gray-750 dark:text-gray-300 leading-relaxed font-semibold">{item.name}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-semibold">{item.name}</span>
                   <Download size={14} className="text-gray-400 dark:text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors ml-auto shrink-0 group-hover:translate-y-0.5 transition-transform" />
                 </a>
               ))}
