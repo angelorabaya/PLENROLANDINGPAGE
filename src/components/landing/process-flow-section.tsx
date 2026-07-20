@@ -8,35 +8,8 @@ import {
   X,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
-  FileCheck,
-  CheckCircle2,
-  MapPin,
-  Award
+  RotateCcw
 } from 'lucide-react'
-
-const keyHighlights = [
-  {
-    icon: FileCheck,
-    title: '1. Document Filing',
-    description: 'Submit mandatory requirements & verification documents to PMRB / PLENRO.',
-  },
-  {
-    icon: MapPin,
-    title: '2. Field Inspection',
-    description: 'Technical evaluation and joint site inspection conducted by PLENRO technical team.',
-  },
-  {
-    icon: CheckCircle2,
-    title: '3. PMRB Deliberation',
-    description: 'Review and evaluation by the Provincial Mining Regulatory Board for compliance.',
-  },
-  {
-    icon: Award,
-    title: '4. Permit Issuance',
-    description: 'Final approval and issuance of official permit by the Provincial Governor.',
-  },
-]
 
 export default function ProcessFlowSection() {
   const [isOpen, setIsOpen] = useState(false)
@@ -149,31 +122,6 @@ export default function ProcessFlowSection() {
                 <span>Click to View Full Resolution</span>
               </div>
             </div>
-          </div>
-
-          {/* Quick Highlight Cards Below Image */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-            {keyHighlights.map((item, index) => {
-              const Icon = item.icon
-              return (
-                <div
-                  key={index}
-                  className="p-4 rounded-2xl bg-gray-50/80 dark:bg-gray-900/40 border border-gray-200/60 dark:border-gray-700/40 flex items-start gap-3.5"
-                >
-                  <div className="p-2.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5">
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <h4 className="font-display font-bold text-xs md:text-sm text-gray-900 dark:text-white">
-                      {item.title}
-                    </h4>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
           </div>
         </motion.div>
       </div>
