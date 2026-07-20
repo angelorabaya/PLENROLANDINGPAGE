@@ -12,6 +12,7 @@ const navLinks = [
   { label: 'Team', href: '#team' },
   { label: 'Regulations', href: '#regulatory-framework' },
   { label: 'News', href: '#news' },
+  { label: 'Process Flow', href: '#process-flow' },
   { label: 'Resources', href: '#resources' },
   { label: 'Contact', href: '#contact' },
 ];

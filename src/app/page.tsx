@@ -5,6 +5,7 @@ import MandateSection from "@/components/landing/mandate-section";
 import TeamSection from "@/components/landing/team-section";
 import RegulatorySection from "@/components/landing/regulatory-section";
 import NewsSection from "@/components/landing/news-section";
+import ProcessFlowSection from "@/components/landing/process-flow-section";
 import ResourcesSection from "@/components/landing/resources-section";
 import LocationSection from "@/components/landing/location-section";
 import Footer from "@/components/landing/footer";
@@ -21,6 +22,7 @@ export default function Home() {
       <TeamSection />
       <RegulatorySection />
       <NewsSection />
+      <ProcessFlowSection />
       <ResourcesSection />
       <LocationSection />
       <Footer />
