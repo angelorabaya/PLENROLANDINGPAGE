@@ -114,6 +114,7 @@ export default function RootLayout({
                 "addressCountry": "PH"
               },
               "telephone": "09627484966",
+              "email": "enro@misamisoriental.gov.ph",
               "openingHoursSpecification": {
                 "@type": "OpeningHoursSpecification",
                 "dayOfWeek": [

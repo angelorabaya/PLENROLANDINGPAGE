@@ -83,10 +83,10 @@ export default function LocationSection() {
                 <div>
                   <h4 className="font-display font-bold text-gray-900 dark:text-white mb-1 text-base">Email Address</h4>
                   <a 
-                    href="mailto:emd.enromisor@gmail.com"
+                    href="mailto:enro@misamisoriental.gov.ph"
                     className="text-sm text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors leading-relaxed font-semibold"
                   >
-                    emd.enromisor@gmail.com
+                    enro@misamisoriental.gov.ph
                   </a>
                 </div>
               </div>
