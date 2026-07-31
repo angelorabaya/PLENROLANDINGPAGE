@@ -5,6 +5,10 @@ import { Download, FileText } from 'lucide-react'
 
 const additionalDownloads = [
   {
+    name: "Citizen's Charter",
+    url: '/citizencharter.pdf',
+  },
+  {
     name: 'Download Ordinance No. 1571-2022',
     url: '/ordinance.pdf',
   },
