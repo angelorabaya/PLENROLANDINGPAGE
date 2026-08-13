@@ -20,6 +20,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -29,6 +30,29 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll-spy: mark the section currently in view as the active nav item.
+  useEffect(() => {
+    const sections = navLinks
+      .map((link) => document.getElementById(link.href.slice(1)))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(`#${entry.target.id}`);
+          }
+        }
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const bgColor = scrolled
@@ -66,6 +90,8 @@ export default function Navbar() {
             <img
               src="/images/plenro.png"
               alt="PLENRO Logo"
+              width={904}
+              height={654}
               className="w-8 h-8 object-contain"
             />
             <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -79,7 +105,12 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                aria-current={activeSection === link.href ? 'true' : undefined}
+                className={`text-sm font-medium transition-colors ${
+                  activeSection === link.href
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+                }`}
               >
                 {link.label}
               </a>
@@ -91,6 +122,8 @@ export default function Navbar() {
             <img
               src="/images/logo.png"
               alt="Misamis Oriental Logo"
+              width={960}
+              height={984}
               className="w-8 h-8 object-contain hidden sm:block"
             />
             <ThemeToggle />
@@ -99,6 +132,8 @@ export default function Navbar() {
               className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -111,6 +146,7 @@ export default function Navbar() {
         {mobileOpen && (
           <motion.div
             key="mobile-menu"
+            id="mobile-menu"
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
@@ -123,7 +159,12 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                  aria-current={activeSection === link.href ? 'true' : undefined}
+                  className={`py-3 text-sm font-medium transition-colors ${
+                    activeSection === link.href
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+                  }`}
                 >
                   {link.label}
                 </a>

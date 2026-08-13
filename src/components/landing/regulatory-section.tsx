@@ -170,6 +170,9 @@ export default function RegulatorySection() {
               {/* Table */}
               <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
                 <table className="w-full">
+                  <caption className="sr-only">
+                    Vehicle and equipment registration fees
+                  </caption>
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
                       <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -217,6 +220,9 @@ export default function RegulatorySection() {
               <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
                 <div className="overflow-x-auto">
                   <table className="w-full">
+                    <caption className="sr-only">
+                      Fines and penalties
+                    </caption>
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
                         <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">

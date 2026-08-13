@@ -1,7 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/landing/theme-provider";
 import Analytics from "@/components/landing/analytics";
 import "./globals.css";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://plenro.pages.dev"),
@@ -41,13 +49,38 @@ export const metadata: Metadata = {
     url: "https://plenro.pages.dev",
     images: [
       {
-        url: "/images/hero-landscape.jpg",
-        width: 1200,
-        height: 630,
+        url: "/images/hero-landscape.webp",
+        width: 1376,
+        height: 768,
         alt: "PLENRO Misamis Oriental Provincial Office",
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "PLENRO Misamis Oriental",
+    description:
+      "Championing environmental stewardship and responsible resource regulation for a sustainable Misamis Oriental.",
+    images: ["/images/hero-landscape.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+  ],
 };
 
 export default function RootLayout({
@@ -58,7 +91,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="h-full antialiased"
+      className={`h-full antialiased ${outfit.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -89,7 +122,7 @@ export default function RootLayout({
               "description": "Official Provincial Local Environment and Natural Resources Office of Misamis Oriental. Access regulatory frameworks, quarry permits, and environmental compliance guidelines.",
               "url": "https://plenro.pages.dev",
               "logo": "https://plenro.pages.dev/images/logo.png",
-              "image": "https://plenro.pages.dev/images/hero-landscape.jpg",
+              "image": "https://plenro.pages.dev/images/hero-landscape.webp",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Ground Floor MISORTEL Building, A. Luna St.",
@@ -117,6 +150,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
       </body>

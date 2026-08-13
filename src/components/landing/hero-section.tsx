@@ -44,8 +44,10 @@ export default function HeroSection() {
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
       {/* Background Layer 1: Hero landscape image with parallax */}
       <motion.img
-        src="/images/hero-landscape.jpg"
-        alt="Hero landscape"
+        src="/images/hero-landscape.webp"
+        alt=""
+        width={1376}
+        height={768}
         style={{ y: yBg }}
         loading="eager"
         fetchPriority="high"
@@ -100,6 +102,8 @@ export default function HeroSection() {
           <img
             src="/images/plenro.png"
             alt="PLENRO Logo"
+            width={904}
+            height={654}
             className="w-20 h-20 object-contain drop-shadow-md"
           />
         </motion.div>
@@ -126,6 +130,8 @@ export default function HeroSection() {
             <img
               src="/images/logo.png"
               alt="Misamis Oriental Logo"
+              width={960}
+              height={984}
               className="w-5 h-5 object-contain"
             />
             Misamis Oriental, Philippines

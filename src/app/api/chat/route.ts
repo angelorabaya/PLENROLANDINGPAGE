@@ -6,11 +6,21 @@ import {
   sanitizeInput,
   chunkKnowledge,
   retrieveTopK,
+  collectSources,
+  getEmbedding,
+  retrieveTopKEmbeddings,
   buildContents,
   buildSystemPrompt,
   isRateLimited,
   resolveModels,
 } from '../../../../functions/lib/chat-core.mjs';
+import { KNOWLEDGE_FILES } from '../../../../functions/lib/knowledge-files.mjs';
+
+type EmbeddingsIndex = {
+  version?: number;
+  model?: string;
+  chunks?: { source?: string; embedding?: number[] }[];
+} | null;
 
 /**
  * DEV-ONLY Next.js App Router Route Handler for POST /api/chat.
@@ -24,10 +34,6 @@ import {
  * route is NOT part of the production static output. On Cloudflare Pages the
  * endpoint is served exclusively by functions/api/chat.js.
  */
-
-// Knowledge files served from public/knowledge/. Add new `.txt` files here
-// AND under public/knowledge/ to include them (must match functions/api/chat.js).
-const KNOWLEDGE_FILES = ['ordinances.txt', 'republic act 7942 chapter 8.txt'];
 
 /** Load knowledge text from public/knowledge/ (Node dev runtime). */
 function loadKnowledgeBase(): string {
@@ -46,6 +52,18 @@ function loadKnowledgeBase(): string {
     }
   }
   return combined.trim();
+}
+
+/** Load the optional precomputed embeddings index from public/knowledge/. */
+function loadEmbeddingsIndex(): EmbeddingsIndex {
+  const filePath = path.join(process.cwd(), 'public', 'knowledge', 'embeddings.json');
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as EmbeddingsIndex;
+  } catch (e) {
+    console.warn('Embeddings index load failed:', e);
+    return null;
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -81,7 +99,7 @@ export async function POST(req: NextRequest) {
     // Durable rate limiting — in dev there is no KV binding, so the shared
     // helper falls back to its in-memory limiter.
     const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    if (await isRateLimited(process.env as Record<string, string>, clientIp)) {
+    if (await isRateLimited(process.env as Record<string, string>, clientIp, 'chat')) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
@@ -100,8 +118,30 @@ export async function POST(req: NextRequest) {
     // Retrieve the relevant knowledge sections for this query (RAG).
     const knowledgeBase = loadKnowledgeBase();
     const chunks = chunkKnowledge(knowledgeBase);
-    const relevantChunks = retrieveTopK(sanitizedMessage, chunks, 6);
+    let relevantChunks = retrieveTopK(sanitizedMessage, chunks, 6);
 
+    // Optional embedding-based retrieval when a precomputed index is present.
+    const embeddingsIndex = loadEmbeddingsIndex();
+    if (
+      embeddingsIndex &&
+      Array.isArray(embeddingsIndex.chunks) &&
+      embeddingsIndex.chunks.length === chunks.length
+    ) {
+      try {
+        const queryEmbedding = await getEmbedding(sanitizedMessage, {
+          apiKey,
+          model: process.env.GEMINI_EMBEDDINGS_MODEL || 'text-embedding-004',
+        });
+        const vectors = embeddingsIndex.chunks.map(
+          (c: { source?: string; embedding?: number[] }) => c.embedding ?? []
+        );
+        relevantChunks = retrieveTopKEmbeddings(queryEmbedding, chunks, vectors, 6);
+      } catch (e) {
+        console.warn('Embedding retrieval failed, falling back to keyword retrieval:', e);
+      }
+    }
+
+    const sources = collectSources(relevantChunks);
     const systemPrompt = buildSystemPrompt(relevantChunks);
     const contents = buildContents(chatHistory, sanitizedMessage, 6);
 
@@ -122,6 +162,12 @@ export async function POST(req: NextRequest) {
             systemInstruction: { parts: [{ text: systemPrompt }] },
             contents: contents,
             generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
+            safetySettings: [
+              { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            ],
           }),
         });
 
@@ -129,7 +175,7 @@ export async function POST(req: NextRequest) {
           const data = await geminiRes.json();
           const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
           if (replyText) {
-            return NextResponse.json({ answer: replyText, modelUsed: model });
+            return NextResponse.json({ answer: replyText, modelUsed: model, sources });
           }
         } else {
           lastStatus = geminiRes.status;

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Send, X, Bot, Sparkles, AlertCircle, Trash2 } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Sparkles, AlertCircle, Trash2, Copy, Check, BookOpen } from 'lucide-react';
 
-type ChatMessage = { role: 'user' | 'bot'; text: string; isError?: boolean };
+type ChatMessage = { role: 'user' | 'bot'; text: string; isError?: boolean; sources?: string[] };
 
 const MAX_HISTORY_MESSAGES = 12; // bound history sent to the API (6 user turns)
+const REQUEST_TIMEOUT_MS = 20000; // abort a stuck Gemini request after 20s
 
 export default function OrdinanceChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,11 +19,15 @@ export default function OrdinanceChat() {
   const [honeypot, setHoneypot] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const lastQuery = useRef('');
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const timedOutRef = useRef(false);
 
   // Load chat history from localStorage on mount (U3)
   useEffect(() => {
@@ -93,13 +98,21 @@ export default function OrdinanceChat() {
     }
   }, [isOpen, loading]);
 
+  // Close the panel and return focus to the floating trigger button.
+  const closeChat = useCallback(() => {
+    setIsOpen(false);
+    setTimeout(() => {
+      triggerButtonRef.current?.focus();
+    }, 50);
+  }, []);
+
   // Escape-to-close + focus trap while the chat dialog is open
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsOpen(false);
+        closeChat();
         return;
       }
       if (e.key === 'Tab') {
@@ -123,7 +136,7 @@ export default function OrdinanceChat() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, closeChat]);
 
   // Send message to Gemini API proxy.
   // `priorHistory` is the conversation BEFORE the current message — the server
@@ -133,6 +146,15 @@ export default function OrdinanceChat() {
     setLoading(true);
 
     const boundedHistory = priorHistory.slice(-MAX_HISTORY_MESSAGES);
+
+    abortRef.current?.abort();
+    timedOutRef.current = false;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const timeout = setTimeout(() => {
+      timedOutRef.current = true;
+      controller.abort();
+    }, REQUEST_TIMEOUT_MS);
 
     try {
       const res = await fetch('/api/chat', {
@@ -144,9 +166,10 @@ export default function OrdinanceChat() {
           conversationId,
           website: honeypot,
         }),
+        signal: controller.signal,
       });
 
-      let data: { error?: string; answer?: string; conversation_id?: string } = {};
+      let data: { error?: string; answer?: string; conversation_id?: string; sources?: string[] } = {};
       try {
         data = await res.json();
       } catch {
@@ -155,6 +178,9 @@ export default function OrdinanceChat() {
 
       if (!res.ok) {
         // Surface the real server error so failures are diagnosable.
+        if (res.status === 429) {
+          throw new Error('You are sending messages too quickly. Please wait a moment and try again.');
+        }
         const serverError = data.error || `Request failed with status ${res.status}.`;
         throw new Error(serverError);
       }
@@ -167,16 +193,32 @@ export default function OrdinanceChat() {
         setConversationId(data.conversation_id);
       }
 
-      setChatHistory(prev => [...prev, { role: 'bot', text: data.answer || 'I am sorry, but I received an empty response.' }]);
+      setChatHistory(prev => [
+        ...prev,
+        {
+          role: 'bot',
+          text: data.answer || 'I am sorry, but I received an empty response.',
+          sources: Array.isArray(data.sources) ? data.sources : undefined,
+        },
+      ]);
     } catch (err) {
       console.error(err);
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      if (controller.signal.aborted && !timedOutRef.current) {
+        // Intentionally aborted (chat cleared or superseded) — stay silent.
+        return;
+      }
+      const message = timedOutRef.current
+        ? 'The request took too long. Please try again.'
+        : err instanceof Error
+          ? err.message
+          : 'Unknown error';
       setError(message);
       setChatHistory(prev => [
         ...prev,
         { role: 'bot', text: message, isError: true },
       ]);
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
       setTimeout(() => {
         inputRef.current?.focus();
@@ -245,11 +287,26 @@ export default function OrdinanceChat() {
   };
 
   const handleClearChat = () => {
+    abortRef.current?.abort();
     setChatHistory([]);
     setConversationId('');
     setError(null);
     localStorage.removeItem('plenro-chat-history');
     localStorage.removeItem('plenro-conversation-id');
+  };
+
+  const handleCopyTranscript = async () => {
+    if (chatHistory.length === 0) return;
+    const transcript = chatHistory
+      .map((chat) => `${chat.role === 'user' ? 'You' : 'PLENRO Assistant'}: ${chat.text}`)
+      .join('\n\n');
+    try {
+      await navigator.clipboard.writeText(transcript);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (e) {
+      console.error('Failed to copy transcript:', e);
+    }
   };
   return (
     <>
@@ -260,7 +317,7 @@ export default function OrdinanceChat() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
+            onClick={closeChat}
             className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40 backdrop-blur-xs cursor-pointer"
           />
         )}
@@ -299,6 +356,7 @@ export default function OrdinanceChat() {
 
               {/* Floating Trigger Button */}
               <motion.button
+                ref={triggerButtonRef}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 20 }}
@@ -369,6 +427,16 @@ export default function OrdinanceChat() {
                       <div className="flex items-center gap-1">
                         {chatHistory.length > 0 && (
                           <button
+                            onClick={handleCopyTranscript}
+                            className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors cursor-pointer"
+                            title="Copy transcript"
+                            aria-label="Copy conversation transcript"
+                          >
+                            {copied ? <Check size={18} /> : <Copy size={18} />}
+                          </button>
+                        )}
+                        {chatHistory.length > 0 && (
+                          <button
                             onClick={handleClearChat}
                             className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors cursor-pointer"
                             title="Clear conversation"
@@ -378,7 +446,7 @@ export default function OrdinanceChat() {
                           </button>
                         )}
                         <button
-                          onClick={() => setIsOpen(false)}
+                          onClick={closeChat}
                           className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors cursor-pointer"
                           aria-label="Close chat"
                         >
@@ -443,6 +511,19 @@ export default function OrdinanceChat() {
                               {chat.role === 'user' ? 'You' : 'Ordinance Assistant'}
                             </span>
                             <p className="whitespace-pre-line font-medium">{chat.text}</p>
+                            {chat.sources && chat.sources.length > 0 && (
+                              <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700/50 flex flex-wrap gap-1.5">
+                                {chat.sources.map((source) => (
+                                  <span
+                                    key={source}
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold"
+                                  >
+                                    <BookOpen size={10} className="shrink-0" />
+                                    {source}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}

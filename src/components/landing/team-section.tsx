@@ -100,7 +100,7 @@ export default function TeamSection() {
                   </div>
                 )}
                  <Image
-                  src="/images/staff.jpg"
+                  src="/images/staff.webp"
                   alt="PLENRO Staff and Employees"
                   fill
                   className={`object-cover group-hover:scale-[1.02] transition-all duration-700 ease-out ${

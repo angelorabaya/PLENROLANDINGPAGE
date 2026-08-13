@@ -114,8 +114,10 @@ export default function ProcessFlowSection() {
             className="relative group cursor-pointer overflow-hidden rounded-2xl bg-gray-900/5 dark:bg-gray-950/40 border border-gray-100 dark:border-gray-800 flex items-center justify-center"
           >
             <img
-              src="/images/processguide.png"
+              src="/images/processguide.webp"
               alt="Standard Process Flow for All Permits Infographic"
+              width={2752}
+              height={1536}
               className="w-full h-auto max-h-[650px] object-contain transition-transform duration-500 group-hover:scale-[1.01]"
               loading="lazy"
             />
@@ -202,8 +204,10 @@ export default function ProcessFlowSection() {
               onClick={closeModal}
             >
               <motion.img
-                src="/images/processguide.png"
+                src="/images/processguide.webp"
                 alt="Standard Process Flow Fullscreen"
+                width={2752}
+                height={1536}
                 style={{ scale: zoomLevel }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl transition-transform"

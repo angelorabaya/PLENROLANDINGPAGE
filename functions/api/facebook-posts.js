@@ -14,40 +14,13 @@
  */
 
 import { fetchPagePosts } from '../lib/facebook-posts.mjs';
-
-// CORS helper — same origin policy as the chat function.
-function getCorsHeaders(request) {
-  const origin = request.headers.get('Origin');
-  let corsOrigin = 'https://plenro.pages.dev';
-  if (origin) {
-    if (
-      origin.startsWith('http://localhost:') ||
-      origin.startsWith('http://127.0.0.1:') ||
-      origin === 'https://plenro.pages.dev' ||
-      /\.plenro\.pages\.dev$/.test(origin)
-    ) {
-      corsOrigin = origin;
-    }
-  }
-  return {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
-    'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
-  };
-}
-
-function jsonResponse(payload, status, corsHeaders) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
-  });
-}
+import { getCorsHeaders, jsonResponse, optionsResponse } from '../lib/http.mjs';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const corsHeaders = getCorsHeaders(request);
+  const corsHeaders = getCorsHeaders(request, {
+    cacheControl: 'public, max-age=300, stale-while-revalidate=600',
+  });
 
   const pageId = env.FACEBOOK_PAGE_ID;
   const accessToken = env.FACEBOOK_ACCESS_TOKEN;
@@ -76,5 +49,5 @@ export async function onRequestPost(context) {
 export async function onRequestOptions(context) {
   const { request } = context;
   const corsHeaders = getCorsHeaders(request);
-  return new Response(null, { status: 204, headers: corsHeaders });
+  return optionsResponse(corsHeaders);
 }

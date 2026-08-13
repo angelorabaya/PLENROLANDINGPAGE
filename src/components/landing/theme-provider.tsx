@@ -12,11 +12,13 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     const saved = localStorage.getItem('plenro-theme') as Theme | null;
-    const initial = saved ?? 'dark';
+    const initial: Theme =
+      saved ??
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     // Reading localStorage must happen after hydration to avoid SSR mismatch.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(initial);

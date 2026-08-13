@@ -20,37 +20,16 @@ import {
   sanitizeInput,
   chunkKnowledge,
   retrieveTopK,
+  collectSources,
+  getEmbedding,
+  retrieveTopKEmbeddings,
   buildContents,
   buildSystemPrompt,
   isRateLimited,
   resolveModels,
 } from '../lib/chat-core.mjs';
-
-// Knowledge files served from public/knowledge/ and loaded through ASSETS.
-// Add new `.txt` files here AND under public/knowledge/ to include them.
-const KNOWLEDGE_FILES = ['ordinances.txt', 'republic act 7942 chapter 8.txt'];
-
-// CORS helper to lock origin to plenro.pages.dev, subdomains, and local dev.
-function getCorsHeaders(request) {
-  const origin = request.headers.get('Origin');
-  let corsOrigin = 'https://plenro.pages.dev';
-  if (origin) {
-    if (
-      origin.startsWith('http://localhost:') ||
-      origin.startsWith('http://127.0.0.1:') ||
-      origin === 'https://plenro.pages.dev' ||
-      /\.plenro\.pages\.dev$/.test(origin)
-    ) {
-      corsOrigin = origin;
-    }
-  }
-  return {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
-  };
-}
+import { getCorsHeaders, jsonResponse, optionsResponse } from '../lib/http.mjs';
+import { KNOWLEDGE_FILES } from '../lib/knowledge-files.mjs';
 
 /**
  * Load every knowledge file listed in KNOWLEDGE_FILES from the static assets.
@@ -94,21 +73,31 @@ async function getKnowledgeBaseContent(env, request) {
   return knowledgeText.trim();
 }
 
-/** Build a JSON Response with the proper CORS + content-type headers. */
-function jsonResponse(payload, status, corsHeaders) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
-  });
+/**
+ * Load the optional precomputed embeddings index
+ * (public/knowledge/embeddings.json). Returns null when absent so callers
+ * fall back to keyword retrieval.
+ */
+async function loadEmbeddingsIndex(env, request) {
+  try {
+    if (!env.ASSETS || typeof env.ASSETS.fetch !== 'function') return null;
+    const url = new URL('/knowledge/embeddings.json', request.url);
+    const res = await env.ASSETS.fetch(url);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    console.warn('Embeddings index load failed:', e);
+    return null;
+  }
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const corsHeaders = getCorsHeaders(request);
+  const corsHeaders = getCorsHeaders(request, { cacheControl: 'no-store' });
 
   // Durable rate limiting (KV-backed when bound, in-memory otherwise).
   const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
-  if (await isRateLimited(env, clientIp)) {
+  if (await isRateLimited(env, clientIp, 'chat')) {
     return jsonResponse(
       { error: 'Too many requests. Please try again later.' },
       429,
@@ -160,8 +149,28 @@ export async function onRequestPost(context) {
     // Retrieve the relevant knowledge sections for this specific query (RAG).
     const knowledgeBase = await getKnowledgeBaseContent(env, request);
     const chunks = chunkKnowledge(knowledgeBase);
-    const relevantChunks = retrieveTopK(sanitizedMessage, chunks, 6);
+    let relevantChunks = retrieveTopK(sanitizedMessage, chunks, 6);
 
+    // Optional embedding-based retrieval when a precomputed index is present.
+    const embeddingsIndex = await loadEmbeddingsIndex(env, request);
+    if (
+      embeddingsIndex &&
+      Array.isArray(embeddingsIndex.chunks) &&
+      embeddingsIndex.chunks.length === chunks.length
+    ) {
+      try {
+        const queryEmbedding = await getEmbedding(sanitizedMessage, {
+          apiKey,
+          model: env.GEMINI_EMBEDDINGS_MODEL || 'text-embedding-004',
+        });
+        const vectors = embeddingsIndex.chunks.map((c) => c.embedding);
+        relevantChunks = retrieveTopKEmbeddings(queryEmbedding, chunks, vectors, 6);
+      } catch (e) {
+        console.warn('Embedding retrieval failed, falling back to keyword retrieval:', e);
+      }
+    }
+
+    const sources = collectSources(relevantChunks);
     const systemPrompt = buildSystemPrompt(relevantChunks);
 
     // Bound history server-side and always append the current message once.
@@ -193,6 +202,12 @@ export async function onRequestPost(context) {
               temperature: 0.4,
               maxOutputTokens: 4096,
             },
+            safetySettings: [
+              { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            ],
           }),
         });
 
@@ -200,7 +215,7 @@ export async function onRequestPost(context) {
           const data = await geminiRes.json();
           const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
           if (replyText) {
-            return jsonResponse({ answer: replyText, modelUsed: model }, 200, corsHeaders);
+            return jsonResponse({ answer: replyText, modelUsed: model, sources }, 200, corsHeaders);
           }
         } else {
           lastStatus = geminiRes.status;
@@ -233,8 +248,5 @@ export async function onRequestPost(context) {
 export async function onRequestOptions(context) {
   const { request } = context;
   const corsHeaders = getCorsHeaders(request);
-  return new Response(null, {
-    status: 204,
-    headers: corsHeaders,
-  });
+  return optionsResponse(corsHeaders);
 }

@@ -25,47 +25,18 @@ import {
   buildContactEmail,
   sendContactEmail,
 } from '../lib/contact.mjs';
+import { getCorsHeaders, jsonResponse, optionsResponse } from '../lib/http.mjs';
 
 // Default Resend sender (test-only: can only deliver to your account inbox).
 const DEFAULT_FROM_EMAIL = 'onboarding@resend.dev';
 
-// CORS helper — same origin policy as the other functions.
-function getCorsHeaders(request) {
-  const origin = request.headers.get('Origin');
-  let corsOrigin = 'https://plenro.pages.dev';
-  if (origin) {
-    if (
-      origin.startsWith('http://localhost:') ||
-      origin.startsWith('http://127.0.0.1:') ||
-      origin === 'https://plenro.pages.dev' ||
-      /\.plenro\.pages\.dev$/.test(origin)
-    ) {
-      corsOrigin = origin;
-    }
-  }
-  return {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
-    'Cache-Control': 'no-store',
-  };
-}
-
-function jsonResponse(payload, status, corsHeaders) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
-  });
-}
-
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const corsHeaders = getCorsHeaders(request);
+  const corsHeaders = getCorsHeaders(request, { cacheControl: 'no-store' });
 
   // Durable rate limiting (KV-backed when bound, in-memory otherwise).
   const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
-  if (await isRateLimited(env, clientIp)) {
+  if (await isRateLimited(env, clientIp, 'contact')) {
     return jsonResponse(
       { error: 'Too many requests. Please try again later.' },
       429,
@@ -136,6 +107,6 @@ export async function onRequestPost(context) {
 
 export async function onRequestOptions(context) {
   const { request } = context;
-  const corsHeaders = getCorsHeaders(request);
-  return new Response(null, { status: 204, headers: corsHeaders });
+  const corsHeaders = getCorsHeaders(request, { cacheControl: 'no-store' });
+  return optionsResponse(corsHeaders);
 }

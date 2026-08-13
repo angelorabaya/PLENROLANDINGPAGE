@@ -14,7 +14,7 @@ import BackToTop from "@/components/landing/back-to-top";
 
 export default function Home() {
   return (
-    <main className="flex-1">
+    <main id="main-content" className="flex-1">
       <Navbar />
       <HeroSection />
       <DepartmentHeadMessage />

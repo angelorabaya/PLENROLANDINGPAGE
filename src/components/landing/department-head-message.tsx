@@ -93,7 +93,7 @@ export default function DepartmentHeadMessage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 animate-pulse" />
                   )}
                   <Image
-                    src="/geranformalpic.jpg"
+                    src="/geranformalpic.webp"
                     alt="GERAN JOHN T. FLORES - PLENRO Department Head"
                     fill
                     className={`object-cover object-top group-hover:scale-[1.03] transition-all duration-700 ease-out ${

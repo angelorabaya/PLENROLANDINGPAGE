@@ -9,6 +9,7 @@ import {
   ExternalLink,
   AlertCircle,
   CalendarDays,
+  RefreshCw,
 } from 'lucide-react'
 
 type FacebookPost = {
@@ -20,6 +21,7 @@ type FacebookPost = {
 }
 
 const AUTO_ADVANCE_MS = 7000
+const FETCH_TIMEOUT_MS = 10000
 
 function formatDate(iso: string): string {
   if (!iso) return ''
@@ -40,6 +42,7 @@ export default function FacebookCarousel() {
   const prefersReducedMotion = useReducedMotion()
 
   const touchStartX = useRef<number | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const goTo = useCallback(
     (next: number) => {
@@ -56,36 +59,48 @@ export default function FacebookCarousel() {
   const goNext = useCallback(() => goTo(index + 1), [goTo, index])
   const goPrev = useCallback(() => goTo(index - 1), [goTo, index])
 
-  useEffect(() => {
-    let cancelled = false
-    async function load() {
-      try {
-        // POST matches both the Cloudflare Pages Function and the dev-only
-        // Next.js route handler (which must be POST for static-export compat).
-        const res = await fetch('/api/facebook-posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({}),
-        })
-        const data = await res.json()
-        if (!res.ok) throw new Error(data?.error || `Request failed with status ${res.status}.`)
-        if (cancelled) return
-        setPosts(Array.isArray(data?.posts) ? data.posts : [])
-        setError(null)
-      } catch (err) {
-        console.error(err)
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Unable to load the Facebook feed.')
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
+  const load = useCallback(async () => {
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+    setLoading(true)
+    setError(null)
+
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+
+    try {
+      // POST matches both the Cloudflare Pages Function and the dev-only
+      // Next.js route handler (which must be POST for static-export compat).
+      const res = await fetch('/api/facebook-posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+        signal: controller.signal,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || `Request failed with status ${res.status}.`)
+      setPosts(Array.isArray(data?.posts) ? data.posts : [])
+      setIndex(0)
+    } catch (err) {
+      console.error(err)
+      if (controller.signal.aborted) {
+        setError('The Facebook feed took too long to load. Please try again.')
+      } else {
+        setError(err instanceof Error ? err.message : 'Unable to load the Facebook feed.')
       }
-    }
-    load()
-    return () => {
-      cancelled = true
+    } finally {
+      clearTimeout(timeout)
+      setLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    // Fetching on mount is an intentional external-system sync; `load` flips
+    // the loading state at its start.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load()
+    return () => abortRef.current?.abort()
+  }, [load])
 
   // Auto-advance (disabled for reduced motion / tiny collections / while interacting).
   useEffect(() => {
@@ -124,6 +139,14 @@ export default function FacebookCarousel() {
         <p className="text-xs text-gray-500 dark:text-gray-400 max-w-[260px] leading-relaxed">
           {error}
         </p>
+        <button
+          type="button"
+          onClick={load}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all"
+        >
+          <RefreshCw size={13} />
+          Try again
+        </button>
         <a
           href="https://www.facebook.com/789005134298348"
           target="_blank"
@@ -144,6 +167,14 @@ export default function FacebookCarousel() {
         <p className="text-xs text-gray-500 dark:text-gray-400 max-w-[260px] leading-relaxed">
           No posts to display yet. Follow us on Facebook for the latest updates.
         </p>
+        <button
+          type="button"
+          onClick={load}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all"
+        >
+          <RefreshCw size={13} />
+          Refresh
+        </button>
         <a
           href="https://www.facebook.com/789005134298348"
           target="_blank"
@@ -246,14 +277,13 @@ export default function FacebookCarousel() {
 
       {/* Dot indicators */}
       {posts.length > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-4" role="tablist" aria-label="Post navigation">
+        <div className="flex items-center justify-center gap-2 mt-4" role="group" aria-label="Post navigation">
           {posts.map((post, i) => (
             <button
               key={post.id}
               type="button"
-              role="tab"
-              aria-selected={i === index}
               aria-label={`Go to post ${i + 1}`}
+              aria-current={i === index ? 'true' : undefined}
               onClick={() => goTo(i)}
               className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
                 i === index

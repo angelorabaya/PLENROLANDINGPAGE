@@ -112,6 +112,16 @@ Current files:
 - `ordinances.txt` — Excerpts of Ordinance No. 1571-2022 (taxes, fees, fines for quarry/mineral resources).
 - `republic act 7942 chapter 8.txt` — RA 7942, Chapter VIII (Quarry Resources).
 
+### Optional: embedding-based retrieval
+
+By default the assistant uses fast keyword retrieval with domain synonyms — no extra cost or setup. You can optionally improve recall by precomputing vector embeddings:
+
+```bash
+GEMINI_API_KEY=... node scripts/build-embeddings.mjs
+```
+
+This writes [`public/knowledge/embeddings.json`](public/knowledge/embeddings.json), which the chat endpoints detect automatically and use for cosine-similarity retrieval (query embeddings are computed at request time via the Gemini Embeddings API). Regenerate the file whenever the knowledge `.txt` files change. If the file is absent or the embedding call fails, the assistant transparently falls back to keyword retrieval.
+
 ## 📮 Contact Form (Resend)
 
 The contact form in the **Office Location & Contact** section posts to `/api/contact`, which is served in production by the Cloudflare Pages Function at [`functions/api/contact.js`](functions/api/contact.js) and in dev by the route handler at [`src/app/api/contact/route.ts`](src/app/api/contact/route.ts). Both share the validation/email logic in [`functions/lib/contact.mjs`](functions/lib/contact.mjs).

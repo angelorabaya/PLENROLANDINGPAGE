@@ -9,6 +9,9 @@ import {
   sanitizeInput,
   chunkKnowledge,
   retrieveTopK,
+  collectSources,
+  cosineSimilarity,
+  retrieveTopKEmbeddings,
   buildContents,
   buildSystemPrompt,
   isRateLimited,
@@ -71,6 +74,39 @@ test('retrieveTopK returns topK chunks for an empty query', () => {
   assert.equal(top.length, 2);
 });
 
+test('retrieveTopK expands domain acronyms and synonyms', () => {
+  const chunks = [
+    { source: 'a.txt', text: 'A Commercial Sand and Gravel Permit requires application fees.' },
+    { source: 'b.txt', text: 'Office hours are eight to five, Monday to Friday.' },
+  ];
+  const top = retrieveTopK('CSAG fees', chunks, 2);
+  assert.equal(top[0].source, 'a.txt');
+});
+
+test('collectSources returns unique sources in retrieval order', () => {
+  const chunks = [
+    { source: 'b.txt', text: 'x' },
+    { source: 'a.txt', text: 'y' },
+    { source: 'b.txt', text: 'z' },
+  ];
+  assert.deepEqual(collectSources(chunks), ['b.txt', 'a.txt']);
+});
+
+test('cosineSimilarity computes correct values', () => {
+  assert.equal(cosineSimilarity([1, 0], [1, 0]), 1);
+  assert.equal(cosineSimilarity([1, 0], [0, 1]), 0);
+  assert.equal(cosineSimilarity([1], [1, 2]), 0);
+});
+
+test('retrieveTopKEmbeddings ranks by cosine similarity', () => {
+  const chunks = [
+    { source: 'a', text: 'x' },
+    { source: 'b', text: 'y' },
+  ];
+  const top = retrieveTopKEmbeddings([1, 0], chunks, [[1, 0], [0, 1]], 2);
+  assert.equal(top[0].source, 'a');
+});
+
 test('buildContents always appends the current message exactly once', () => {
   const history = [
     { role: 'user', text: 'Hello' },
@@ -112,6 +148,18 @@ test('buildSystemPrompt includes knowledge sources and structured summary', () =
   assert.ok(prompt.includes('PERMIT TYPES AND VALIDITY'));
   assert.ok(prompt.includes('VEHICLE AND EQUIPMENT REGISTRATION FEES'));
   assert.ok(prompt.includes('FINES AND PENALTIES'));
+});
+
+test('buildSystemPrompt includes citation, multilingual, and guardrail guidance', () => {
+  const prompt = buildSystemPrompt([
+    { source: 'ordinances.txt', text: 'Ten percent tax on sand and gravel.' },
+  ]);
+  assert.ok(prompt.includes('[REF 1]'));
+  assert.ok(prompt.includes('SOURCE FILES'));
+  assert.ok(prompt.includes('Cite your sources'));
+  assert.ok(prompt.includes('Filipino (Tagalog)'));
+  assert.ok(prompt.includes('Cebuano (Bisaya)'));
+  assert.ok(prompt.includes('Security'));
 });
 
 test('resolveModels parses env list and falls back to defaults', () => {

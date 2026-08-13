@@ -35,6 +35,8 @@ export default function Footer() {
               <img
                 src="/images/plenro.png"
                 alt="PLENRO Logo"
+                width={904}
+                height={654}
                 className="w-10 h-10 object-contain"
               />
               <div>
@@ -185,6 +187,8 @@ export default function Footer() {
               <img
                 src="/images/logo.png"
                 alt="Misamis Oriental Logo"
+                width={960}
+                height={984}
                 className="w-5 h-5 object-contain"
               />
               <p className="text-xs text-gray-500">
