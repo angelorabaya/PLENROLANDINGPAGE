@@ -1,50 +1,36 @@
 /**
- * Cloudflare Pages Function — Dify chat proxy
- * 
- * Cloudflare Pages static exports do NOT include Next.js API routes.
- * This serverless function handles POST /api/chat on the edge instead.
- * 
- * Environment variables DIFY_API_KEY and DIFY_API_URL must be set in
- * the Cloudflare dashboard under Settings → Environment Variables.
+ * Cloudflare Pages Function — Gemini API Chat Proxy with Retrieval-Augmented
+ * Knowledge Base.
+ *
+ * This is the SINGLE production path for POST /api/chat. The app is deployed
+ * as a static export on Cloudflare Pages, so this function is what actually
+ * serves the endpoint (the legacy Next.js App Router route handler was removed
+ * because it is incompatible with `output: 'export'`).
+ *
+ * Environment variables (set in the Cloudflare Pages dashboard or .env.local
+ * for local development):
+ *  - GEMINI_API_KEY       (required) — server-side Gemini API key. NEVER use a
+ *                        NEXT_PUBLIC_ prefix for secrets.
+ *  - GEMINI_MODELS        (optional) — comma-separated model IDs to try in order.
+ *  - RATE_LIMIT_KV        (optional) — KV namespace binding for durable
+ *                        per-IP rate limiting. Falls back to in-memory.
  */
 
-// In-memory rate limit cache (resides in the worker isolate)
-const ipCache = new Map();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS = 10; // Max 10 requests per minute
+import {
+  sanitizeInput,
+  chunkKnowledge,
+  retrieveTopK,
+  buildContents,
+  buildSystemPrompt,
+  isRateLimited,
+  resolveModels,
+} from '../lib/chat-core.mjs';
 
-function isRateLimited(ip) {
-  if (!ip) return false;
-  const now = Date.now();
-  const userData = ipCache.get(ip) || { count: 0, firstRequestTime: now };
-  
-  if (now - userData.firstRequestTime > RATE_LIMIT_WINDOW) {
-    userData.count = 1;
-    userData.firstRequestTime = now;
-    ipCache.set(ip, userData);
-    return false;
-  }
-  
-  userData.count++;
-  ipCache.set(ip, userData);
-  return userData.count > MAX_REQUESTS;
-}
+// Knowledge files served from public/knowledge/ and loaded through ASSETS.
+// Add new `.txt` files here AND under public/knowledge/ to include them.
+const KNOWLEDGE_FILES = ['ordinances.txt', 'republic act 7942 chapter 8.txt'];
 
-// Clean up old entries from the rate limit cache
-let lastCleanup = Date.now();
-function cleanupCache() {
-  const now = Date.now();
-  if (now - lastCleanup > 5 * 60 * 1000) { // every 5 minutes
-    for (const [ip, data] of ipCache.entries()) {
-      if (now - data.firstRequestTime > RATE_LIMIT_WINDOW) {
-        ipCache.delete(ip);
-      }
-    }
-    lastCleanup = now;
-  }
-}
-
-// CORS helper to lock origin to plenro.pages.dev, subdomains, and local dev environments
+// CORS helper to lock origin to plenro.pages.dev, subdomains, and local dev.
 function getCorsHeaders(request) {
   const origin = request.headers.get('Origin');
   let corsOrigin = 'https://plenro.pages.dev';
@@ -66,104 +52,177 @@ function getCorsHeaders(request) {
   };
 }
 
-// HTML tag remover & text trimmer
-function sanitizeInput(input) {
-  if (typeof input !== 'string') return '';
-  return input.replace(/<\/?[^>]+(>|$)/g, '').trim();
+/**
+ * Load every knowledge file listed in KNOWLEDGE_FILES from the static assets.
+ * Falls back to /ordinance.txt when nothing loads.
+ * @param {any} env
+ * @param {Request} request
+ * @returns {Promise<string>}
+ */
+async function getKnowledgeBaseContent(env, request) {
+  let knowledgeText = '';
+
+  try {
+    if (env.ASSETS && typeof env.ASSETS.fetch === 'function') {
+      for (const file of KNOWLEDGE_FILES) {
+        const url = new URL(`/knowledge/${encodeURIComponent(file)}`, request.url);
+        const res = await env.ASSETS.fetch(url);
+        if (res.ok) {
+          knowledgeText += `\n--- FILE: ${file} ---\n` + (await res.text()) + `\n`;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('ASSETS fetch failed for knowledge base:', e);
+  }
+
+  // Fallback if knowledge base wasn't loaded dynamically.
+  if (!knowledgeText.trim()) {
+    try {
+      const url = new URL('/ordinance.txt', request.url);
+      if (env.ASSETS) {
+        const res = await env.ASSETS.fetch(url);
+        if (res.ok) {
+          knowledgeText += `\n--- FILE: ordinance.txt ---\n` + (await res.text()) + `\n`;
+        }
+      }
+    } catch (e) {
+      console.warn('Fallback ordinance fetch failed:', e);
+    }
+  }
+
+  return knowledgeText.trim();
+}
+
+/** Build a JSON Response with the proper CORS + content-type headers. */
+function jsonResponse(payload, status, corsHeaders) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
+  });
 }
 
 export async function onRequestPost(context) {
   const { request, env } = context;
   const corsHeaders = getCorsHeaders(request);
 
-  // Rate Limiting Check
+  // Durable rate limiting (KV-backed when bound, in-memory otherwise).
   const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
-  cleanupCache();
-  if (isRateLimited(clientIp)) {
-    return new Response(
-      JSON.stringify({ error: 'Too many requests. Please try again later.' }),
-      { status: 429, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+  if (await isRateLimited(env, clientIp)) {
+    return jsonResponse(
+      { error: 'Too many requests. Please try again later.' },
+      429,
+      corsHeaders
     );
   }
 
   try {
-    const { message, conversationId, website } = await request.json();
+    const { message, chatHistory, website } = await request.json();
 
-    // Honeypot Field Check (bots usually auto-fill hidden input fields named 'website')
+    // Honeypot field check (bot protection). `website` is an invisible input
+    // that legitimate users never fill in; only automated bots do.
     if (website) {
-      return new Response(
-        JSON.stringify({ error: 'Potential automated activity detected.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      return jsonResponse(
+        { error: 'Potential automated activity detected.' },
+        400,
+        corsHeaders
       );
     }
 
-    // Input validation
+    // Input validation.
     if (!message || typeof message !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Message is required.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-      );
+      return jsonResponse({ error: 'Message is required.' }, 400, corsHeaders);
     }
 
     const sanitizedMessage = sanitizeInput(message);
     if (sanitizedMessage.length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'Message cannot be empty.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-      );
+      return jsonResponse({ error: 'Message cannot be empty.' }, 400, corsHeaders);
     }
 
     if (sanitizedMessage.length > 500) {
-      return new Response(
-        JSON.stringify({ error: 'Message exceeds the maximum length of 500 characters.' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      return jsonResponse(
+        { error: 'Message exceeds maximum length of 500 characters.' },
+        400,
+        corsHeaders
       );
     }
 
-    const apiKey = env.DIFY_API_KEY;
-    const apiUrl = env.DIFY_API_URL;
-
-    if (!apiKey || !apiUrl) {
-      return new Response(
-        JSON.stringify({ error: 'Dify API credentials are missing from the environment.' }),
-        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    // Server-side only secret. Never expose a NEXT_PUBLIC_ prefixed key.
+    const apiKey = env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+      return jsonResponse(
+        { error: 'Gemini API key is not configured in the environment.' },
+        500,
+        corsHeaders
       );
     }
 
-    const difyResponse = await fetch(`${apiUrl}/chat-messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        inputs: {},
-        query: sanitizedMessage,
-        response_mode: 'blocking',
-        conversation_id: conversationId || '',
-        user: 'site_visitor_session',
-      }),
-    });
+    // Retrieve the relevant knowledge sections for this specific query (RAG).
+    const knowledgeBase = await getKnowledgeBaseContent(env, request);
+    const chunks = chunkKnowledge(knowledgeBase);
+    const relevantChunks = retrieveTopK(sanitizedMessage, chunks, 6);
 
-    if (!difyResponse.ok) {
-      const errorText = await difyResponse.text();
-      console.error('Dify API error:', difyResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ error: `Dify API responded with status: ${difyResponse.status}` }),
-        { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-      );
+    const systemPrompt = buildSystemPrompt(relevantChunks);
+
+    // Bound history server-side and always append the current message once.
+    const contents = buildContents(chatHistory, sanitizedMessage, 6);
+
+    // Candidate models in preference order (overridable via GEMINI_MODELS).
+    const candidateModels = resolveModels(env.GEMINI_MODELS);
+
+    let lastStatus = 500;
+
+    for (const model of candidateModels) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+      try {
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Prefer the header over a query param so the key never leaks
+            // into request logs / URLs.
+            'x-goog-api-key': apiKey,
+          },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: systemPrompt }],
+            },
+            contents: contents,
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 4096,
+            },
+          }),
+        });
+
+        if (geminiRes.ok) {
+          const data = await geminiRes.json();
+          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (replyText) {
+            return jsonResponse({ answer: replyText, modelUsed: model }, 200, corsHeaders);
+          }
+        } else {
+          lastStatus = geminiRes.status;
+          const errorText = await geminiRes.text();
+          console.warn(`Gemini model ${model} failed with status ${geminiRes.status}:`, errorText);
+        }
+      } catch (err) {
+        console.warn(`Error calling Gemini model ${model}:`, err);
+      }
     }
 
-    const data = await difyResponse.json();
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    });
+    return jsonResponse(
+      { error: `Gemini API responded with status: ${lastStatus}` },
+      502,
+      corsHeaders
+    );
   } catch (error) {
     console.error('Chat proxy error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to process communication with Dify' }),
-      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    return jsonResponse(
+      { error: 'Failed to process communication with Gemini API' },
+      500,
+      corsHeaders
     );
   }
 }

@@ -1,0 +1,29 @@
+# ============================================================
+# Cloudflare Pages configuration for PLENRO Misamis Oriental
+# ============================================================
+
+# Static export output directory produced by `npm run build`.
+pages_build_output_dir = "out"
+
+compatibility_date = "2025-06-01"
+
+# The Pages Function at functions/api/chat.js serves POST /api/chat.
+# It requires a GEMINI_API_KEY, set as an environment variable in the
+# Cloudflare dashboard (Settings → Environment Variables), NOT here.
+
+# ------------------------------------------------------------------
+# OPTIONAL: Durable rate limiting via a KV namespace.
+#
+# To enable durable (cross-isolate) per-IP rate limiting, create a KV
+# namespace in your Cloudflare account, then either:
+#   A) Add it in the Cloudflare dashboard:
+#        Pages → your project → Settings → Functions → KV namespace bindings
+#        Variable name: RATE_LIMIT_KV
+#   B) Uncomment the binding below (requires the namespace ID):
+#
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "YOUR_KV_NAMESPACE_ID"
+#
+# Without this binding the function falls back to an in-memory limiter.
+# ------------------------------------------------------------------

@@ -4,11 +4,15 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Send, X, Bot, Sparkles, AlertCircle, Trash2 } from 'lucide-react';
 
+type ChatMessage = { role: 'user' | 'bot'; text: string; isError?: boolean };
+
+const MAX_HISTORY_MESSAGES = 12; // bound history sent to the API (6 user turns)
+
 export default function OrdinanceChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [conversationId, setConversationId] = useState('');
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot'; text: string }[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
@@ -16,6 +20,8 @@ export default function OrdinanceChat() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const lastQuery = useRef('');
 
   // Load chat history from localStorage on mount (U3)
@@ -24,6 +30,8 @@ export default function OrdinanceChat() {
     const savedId = localStorage.getItem('plenro-conversation-id');
     if (savedHistory) {
       try {
+        // Reading localStorage must happen after hydration to avoid SSR mismatch.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setChatHistory(JSON.parse(savedHistory));
       } catch (e) {
         console.error('Error loading chat history:', e);
@@ -75,23 +83,81 @@ export default function OrdinanceChat() {
     }
   }, [chatHistory, loading, isOpen]);
 
-  // Send message to Dify API proxy
-  const sendMessageToAPI = async (textToSend: string) => {
+  // Keep focus on input field when chat opens or loading finishes
+  useEffect(() => {
+    if (isOpen && !loading) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, loading]);
+
+  // Escape-to-close + focus trap while the chat dialog is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key === 'Tab') {
+        const panel = panelRef.current;
+        if (!panel) return;
+        const focusable = panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  // Send message to Gemini API proxy.
+  // `priorHistory` is the conversation BEFORE the current message — the server
+  // appends `textToSend` itself, so the client must NOT include it again.
+  const sendMessageToAPI = async (textToSend: string, priorHistory: ChatMessage[]) => {
     setError(null);
     setLoading(true);
+
+    const boundedHistory = priorHistory.slice(-MAX_HISTORY_MESSAGES);
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: textToSend, conversationId, website: honeypot }),
+        body: JSON.stringify({
+          message: textToSend,
+          chatHistory: boundedHistory,
+          conversationId,
+          website: honeypot,
+        }),
       });
 
-      if (!res.ok) {
-        throw new Error('Server error');
+      let data: { error?: string; answer?: string; conversation_id?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        // Non-JSON body (e.g., proxy 404/500 page) — keep data empty.
       }
 
-      const data = await res.json();
+      if (!res.ok) {
+        // Surface the real server error so failures are diagnosable.
+        const serverError = data.error || `Request failed with status ${res.status}.`;
+        throw new Error(serverError);
+      }
 
       if (data.error) {
         throw new Error(data.error);
@@ -104,10 +170,17 @@ export default function OrdinanceChat() {
       setChatHistory(prev => [...prev, { role: 'bot', text: data.answer || 'I am sorry, but I received an empty response.' }]);
     } catch (err) {
       console.error(err);
-      setError('Connection trouble. Please check back in a moment.');
-      setChatHistory(prev => [...prev, { role: 'bot', text: 'Sorry, I am having trouble reaching the database right now.' }]);
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(message);
+      setChatHistory(prev => [
+        ...prev,
+        { role: 'bot', text: message, isError: true },
+      ]);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
     }
   };
 
@@ -131,26 +204,44 @@ export default function OrdinanceChat() {
     setMessage('');
     lastQuery.current = queryToSend;
 
-    // Add user message to history
-    setChatHistory(prev => [...prev, { role: 'user', text: queryToSend }]);
-    await sendMessageToAPI(queryToSend);
+    // Add user message to display history; send ONLY the prior history to the API.
+    const updatedHistory = [...chatHistory, { role: 'user' as const, text: queryToSend }];
+    setChatHistory(updatedHistory);
+    await sendMessageToAPI(queryToSend, chatHistory);
   };
 
   const handleSendSuggestion = async (suggestionText: string) => {
     if (loading) return;
     lastQuery.current = suggestionText;
 
-    // Add user message to history
-    setChatHistory(prev => [...prev, { role: 'user', text: suggestionText }]);
-    await sendMessageToAPI(suggestionText);
+    // Add user message to display history; send ONLY the prior history to the API.
+    const updatedHistory = [...chatHistory, { role: 'user' as const, text: suggestionText }];
+    setChatHistory(updatedHistory);
+    await sendMessageToAPI(suggestionText, chatHistory);
   };
 
   const handleRetry = async () => {
     if (!lastQuery.current || loading) return;
-    
-    // Add user message again to show retry intent
-    setChatHistory(prev => [...prev, { role: 'user', text: lastQuery.current }]);
-    await sendMessageToAPI(lastQuery.current);
+
+    setError(null);
+
+    // Drop any trailing bot error placeholders so they are not replayed.
+    const displayHistory = [...chatHistory];
+    while (
+      displayHistory.length > 0 &&
+      displayHistory[displayHistory.length - 1].role === 'bot' &&
+      displayHistory[displayHistory.length - 1].isError
+    ) {
+      displayHistory.pop();
+    }
+
+    // The last user message corresponds to lastQuery; strip it for the API
+    // call (the server re-appends it) but keep it in the display history.
+    const lastUserIndex = displayHistory.map((m) => m.role).lastIndexOf('user');
+    const priorHistory = lastUserIndex >= 0 ? displayHistory.slice(0, lastUserIndex) : [];
+
+    setChatHistory(displayHistory);
+    await sendMessageToAPI(lastQuery.current, priorHistory);
   };
 
   const handleClearChat = () => {
@@ -187,7 +278,7 @@ export default function OrdinanceChat() {
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 10, scale: 0.8 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute right-16 top-2.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-xl border border-gray-850 dark:border-gray-700 whitespace-nowrap flex items-center gap-2"
+                    className="absolute right-16 top-2.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-xl border border-gray-800 dark:border-gray-700 whitespace-nowrap flex items-center gap-2"
                   >
                     <Sparkles size={14} className="text-amber-400 animate-pulse" />
                     <span>Need help? Ask PLENRO AI</span>
@@ -250,6 +341,10 @@ export default function OrdinanceChat() {
               <AnimatePresence>
                 {isOpen && (
                   <motion.div
+                    ref={panelRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="plenro-chat-title"
                     initial={{ opacity: 0, y: 30, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -264,7 +359,7 @@ export default function OrdinanceChat() {
                           <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-emerald-600 rounded-full animate-pulse" />
                         </div>
                         <div>
-                          <h4 className="font-display font-bold text-sm leading-tight flex items-center gap-1.5">
+                          <h4 id="plenro-chat-title" className="font-display font-bold text-sm leading-tight flex items-center gap-1.5">
                             PLENRO AI Assistant
                             <Sparkles size={12} className="text-emerald-200 animate-pulse" />
                           </h4>
@@ -293,7 +388,12 @@ export default function OrdinanceChat() {
                     </div>
 
                     {/* Messages Container */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-950/40">
+                    <div
+                      role="log"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-950/40"
+                    >
                       {chatHistory.length === 0 && (
                         <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
                           <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 animate-pulse">
@@ -394,12 +494,12 @@ export default function OrdinanceChat() {
                         />
                       </div>
                       <input
+                        ref={inputRef}
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Ask about legal codes, fines..."
                         className="flex-grow bg-gray-50 dark:bg-gray-950 px-4 py-2.5 rounded-xl text-sm border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-colors font-medium"
-                        disabled={loading}
                         maxLength={500}
                       />
                       <button

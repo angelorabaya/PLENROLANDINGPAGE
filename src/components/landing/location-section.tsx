@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Navigation } from 'lucide-react';
+import ContactForm from './contact-form';
 
 export default function LocationSection() {
   const address = "Ground Floor MISORTEL Building, A. Luna St., Cagayan de Oro City, Philippines";
@@ -118,23 +119,27 @@ export default function LocationSection() {
             </a>
           </motion.div>
 
-          {/* Right Column: Google Maps Embed (3/5 span) */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-3 min-h-[350px] lg:min-h-full rounded-2xl overflow-hidden border border-gray-200/50 dark:border-gray-700/50 shadow-inner relative bg-white dark:bg-gray-800"
-          >
-            <iframe
-              title="PLENRO Misamis Oriental Office Location"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
-              className="absolute inset-0 w-full h-full border-0"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </motion.div>
+          {/* Right Column: Google Maps Embed + Contact Form (3/5 span) */}
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="min-h-[280px] rounded-2xl overflow-hidden border border-gray-200/50 dark:border-gray-700/50 shadow-inner relative bg-white dark:bg-gray-800"
+            >
+              <iframe
+                title="PLENRO Misamis Oriental Office Location"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </motion.div>
+
+            <ContactForm />
+          </div>
         </div>
       </div>
     </section>

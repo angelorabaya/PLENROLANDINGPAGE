@@ -7,7 +7,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="relative bg-gray-900 dark:bg-gray-950 text-white overflow-hidden">
+    <footer id="footer" className="relative bg-gray-900 dark:bg-gray-950 text-white overflow-hidden">
       {/* Wave SVG Divider */}
       <div className="w-full overflow-hidden leading-[0] bg-white dark:bg-gray-900/50">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-10 text-gray-900 dark:text-gray-950 fill-current">
@@ -147,7 +147,7 @@ export default function Footer() {
             {/* Social */}
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="https://www.facebook.com/profile.php?id=61581984893275"
+                href="https://www.facebook.com/789005134298348"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 flex items-center justify-center transition-all duration-300 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:border-emerald-500/40 group"

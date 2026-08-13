@@ -1,0 +1,141 @@
+/**
+ * Cloudflare Pages Function — Contact form inquiry submission.
+ *
+ * Serves POST /api/contact by validating the form payload and emailing the
+ * inquiry to the office through the Resend API. The Resend API key and the
+ * destination address are read from the environment server-side only.
+ * (POST is used so it matches the dev-only Next.js route handler, which must be
+ * POST to remain compatible with the site's static `output: 'export'`.)
+ *
+ * Environment variables (Cloudflare Pages dashboard or .env.local for dev):
+ *  - RESEND_API_KEY       (required) — Resend API key (https://resend.com/api-keys)
+ *  - CONTACT_TO_EMAIL     (required) — inbox that receives the inquiries
+ *                        (e.g. enro@misamisoriental.gov.ph)
+ *  - CONTACT_FROM_EMAIL   (optional) — verified sender address in Resend.
+ *                        Defaults to PLENRO Website <onboarding@resend.dev>
+ *                        (Resend's test sender, which can only reach your own
+ *                        account inbox). Use a verified domain for real sends.
+ *
+ * See README.md → "Contact Form" for setup instructions.
+ */
+
+import { isRateLimited } from '../lib/chat-core.mjs';
+import {
+  normalizeContactPayload,
+  buildContactEmail,
+  sendContactEmail,
+} from '../lib/contact.mjs';
+
+// Default Resend sender (test-only: can only deliver to your account inbox).
+const DEFAULT_FROM_EMAIL = 'onboarding@resend.dev';
+
+// CORS helper — same origin policy as the other functions.
+function getCorsHeaders(request) {
+  const origin = request.headers.get('Origin');
+  let corsOrigin = 'https://plenro.pages.dev';
+  if (origin) {
+    if (
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:') ||
+      origin === 'https://plenro.pages.dev' ||
+      /\.plenro\.pages\.dev$/.test(origin)
+    ) {
+      corsOrigin = origin;
+    }
+  }
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+    'Cache-Control': 'no-store',
+  };
+}
+
+function jsonResponse(payload, status, corsHeaders) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
+  });
+}
+
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  const corsHeaders = getCorsHeaders(request);
+
+  // Durable rate limiting (KV-backed when bound, in-memory otherwise).
+  const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+  if (await isRateLimited(env, clientIp)) {
+    return jsonResponse(
+      { error: 'Too many requests. Please try again later.' },
+      429,
+      corsHeaders
+    );
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonResponse({ error: 'Invalid JSON body.' }, 400, corsHeaders);
+  }
+
+  const normalized = normalizeContactPayload(payload);
+
+  // Honeypot field check (bot protection). Reject bots as a success so they
+  // learn nothing about the form.
+  if (normalized.honeypotFilled) {
+    return jsonResponse({ ok: true }, 200, corsHeaders);
+  }
+
+  if (!normalized.ok) {
+    return jsonResponse({ errors: normalized.errors }, 400, corsHeaders);
+  }
+
+  const apiKey = env.RESEND_API_KEY;
+  const toEmail = env.CONTACT_TO_EMAIL;
+  const fromEmail = env.CONTACT_FROM_EMAIL || DEFAULT_FROM_EMAIL;
+
+  if (!apiKey || apiKey === 'your_resend_api_key_here') {
+    return jsonResponse(
+      { error: 'The contact form is not configured (missing RESEND_API_KEY).' },
+      500,
+      corsHeaders
+    );
+  }
+
+  if (!toEmail) {
+    return jsonResponse(
+      { error: 'The contact form is not configured (missing CONTACT_TO_EMAIL).' },
+      500,
+      corsHeaders
+    );
+  }
+
+  try {
+    const emailPayload = buildContactEmail({
+      data: normalized.data,
+      toEmail,
+      fromEmail,
+    });
+
+    await sendContactEmail({ apiKey, emailPayload });
+    return jsonResponse({ ok: true }, 200, corsHeaders);
+  } catch (err) {
+    console.error('Contact form email error:', err);
+    // Surface the underlying error (e.g. Resend "domain not verified") so the
+    // office can diagnose configuration issues without inspecting logs.
+    const detail = err instanceof Error ? err.message : 'Unknown error';
+    return jsonResponse(
+      { error: `Failed to send your message: ${detail}` },
+      502,
+      corsHeaders
+    );
+  }
+}
+
+export async function onRequestOptions(context) {
+  const { request } = context;
+  const corsHeaders = getCorsHeaders(request);
+  return new Response(null, { status: 204, headers: corsHeaders });
+}

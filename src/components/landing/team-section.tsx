@@ -106,9 +106,9 @@ export default function TeamSection() {
                   className={`object-cover group-hover:scale-[1.02] transition-all duration-700 ease-out ${
                     isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
                   }`}
-                  sizes="(max-w-768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   onLoad={() => setIsLoaded(true)}
-                  priority
+                  loading="lazy"
                 />
               </div>
               {/* Overlay details */}

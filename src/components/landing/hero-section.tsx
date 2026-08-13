@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, Variants, useScroll, useTransform } from 'framer-motion'
-import { MapPin, ChevronDown, Download } from 'lucide-react'
+import { motion, Variants, useScroll, useTransform, useReducedMotion, type TargetAndTransition, type Transition } from 'framer-motion'
+import { ChevronDown, Download } from 'lucide-react'
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -25,6 +25,20 @@ const itemVariants: Variants = {
 export default function HeroSection() {
   const { scrollY } = useScroll();
   const yBg = useTransform(scrollY, [0, 500], [0, 150]);
+  const prefersReducedMotion = useReducedMotion();
+
+  // Aurora blob animation that respects prefers-reduced-motion.
+  const blobMotion = (
+    x: number[],
+    y: number[],
+    duration: number
+  ): { animate: TargetAndTransition; transition: Transition } =>
+    prefersReducedMotion
+      ? { animate: { x: 0, y: 0 }, transition: { duration: 0 } }
+      : {
+          animate: { x, y },
+          transition: { duration, repeat: Infinity, ease: 'easeInOut' },
+        };
 
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
@@ -33,6 +47,8 @@ export default function HeroSection() {
         src="/images/hero-landscape.jpg"
         alt="Hero landscape"
         style={{ y: yBg }}
+        loading="eager"
+        fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-10 pointer-events-none"
       />
 
@@ -43,68 +59,28 @@ export default function HeroSection() {
       <motion.div
         className="absolute w-96 h-96 rounded-full bg-emerald-500/30 blur-3xl"
         style={{ top: '10%', left: '15%' }}
-        animate={{
-          x: [0, 80, -40, 60, 0],
-          y: [0, -60, 40, -30, 0],
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...blobMotion([0, 80, -40, 60, 0], [0, -60, 40, -30, 0], 12)}
       />
       <motion.div
         className="absolute w-[28rem] h-[28rem] rounded-full bg-teal-500/20 blur-3xl"
         style={{ top: '30%', right: '10%' }}
-        animate={{
-          x: [0, -70, 50, -40, 0],
-          y: [0, 50, -70, 30, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...blobMotion([0, -70, 50, -40, 0], [0, 50, -70, 30, 0], 10)}
       />
       {/* Amber/Gold Accent Aurora Blob (A10) */}
       <motion.div
         className="absolute w-[26rem] h-[26rem] rounded-full bg-amber-500/15 dark:bg-amber-500/10 blur-3xl"
         style={{ top: '15%', left: '45%' }}
-        animate={{
-          x: [0, -50, 70, -30, 0],
-          y: [0, 60, -40, 50, 0],
-        }}
-        transition={{
-          duration: 13,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...blobMotion([0, -50, 70, -30, 0], [0, 60, -40, 50, 0], 13)}
       />
       <motion.div
         className="absolute w-[30rem] h-[30rem] rounded-full bg-cyan-500/25 blur-3xl"
         style={{ bottom: '10%', left: '30%' }}
-        animate={{
-          x: [0, 60, -80, 40, 0],
-          y: [0, -40, 60, -50, 0],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...blobMotion([0, 60, -80, 40, 0], [0, -40, 60, -50, 0], 15)}
       />
       <motion.div
         className="absolute w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl"
         style={{ bottom: '20%', right: '25%' }}
-        animate={{
-          x: [0, -50, 70, -30, 0],
-          y: [0, 70, -50, 40, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...blobMotion([0, -50, 70, -30, 0], [0, 70, -50, 40, 0], 8)}
       />
 
       {/* Content */}

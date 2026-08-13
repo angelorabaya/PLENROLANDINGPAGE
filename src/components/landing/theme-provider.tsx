@@ -17,6 +17,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem('plenro-theme') as Theme | null;
     const initial = saved ?? 'dark';
+    // Reading localStorage must happen after hydration to avoid SSR mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(initial);
     document.documentElement.classList.toggle('dark', initial === 'dark');
   }, []);

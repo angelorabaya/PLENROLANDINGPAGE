@@ -101,7 +101,7 @@ export default function DepartmentHeadMessage() {
                     }`}
                     sizes="(max-width: 768px) 176px, 208px"
                     onLoad={() => setIsLoaded(true)}
-                    priority
+                    loading="lazy"
                   />
                   {/* Subtle gradient overlay at bottom */}
                   <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-gray-950/60 to-transparent" />
