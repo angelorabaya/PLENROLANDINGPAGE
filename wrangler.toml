@@ -2,6 +2,8 @@
 # Cloudflare Pages configuration for PLENRO Misamis Oriental
 # ============================================================
 
+name = "plenro"
+
 # Static export output directory produced by `npm run build`.
 pages_build_output_dir = "out"
 
