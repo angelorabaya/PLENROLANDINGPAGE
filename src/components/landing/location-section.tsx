@@ -106,17 +106,6 @@ export default function LocationSection() {
                 </div>
               </div>
             </div>
-
-            {/* Direct Directions Action */}
-            <a
-              href={googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 lg:mt-0 flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-600 hover:scale-105 active:scale-95 text-white font-semibold shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 transition-all duration-300 group cursor-pointer"
-            >
-              <Navigation className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              Get Directions on Google Maps
-            </a>
           </motion.div>
 
           {/* Right Column: Google Maps Embed + Contact Form (3/5 span) */}
@@ -137,6 +126,17 @@ export default function LocationSection() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </motion.div>
+
+            {/* Direct Directions Action */}
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-600 hover:scale-105 active:scale-95 text-white font-semibold shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/25 transition-all duration-300 group cursor-pointer"
+            >
+              <Navigation className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              Get Directions on Google Maps
+            </a>
 
             <ContactForm />
           </div>
