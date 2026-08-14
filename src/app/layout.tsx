@@ -95,6 +95,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Preload the LCP hero image so it starts fetching before hydration */}
+        <link rel="preload" as="image" href="/images/hero-landscape.webp" />
+        {/* Preconnect to the Cloudflare Web Analytics script origin */}
+        <link
+          rel="preconnect"
+          href="https://static.cloudflareinsights.com"
+          crossOrigin=""
+        />
         {/* Inline script to prevent flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{

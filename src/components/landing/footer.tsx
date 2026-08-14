@@ -37,6 +37,7 @@ export default function Footer() {
                 alt="PLENRO Logo"
                 width={904}
                 height={654}
+                loading="lazy"
                 className="w-10 h-10 object-contain"
               />
               <div>
@@ -189,6 +190,7 @@ export default function Footer() {
                 alt="Misamis Oriental Logo"
                 width={960}
                 height={984}
+                loading="lazy"
                 className="w-5 h-5 object-contain"
               />
               <p className="text-xs text-gray-500">
