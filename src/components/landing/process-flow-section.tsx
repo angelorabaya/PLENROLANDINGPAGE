@@ -120,6 +120,7 @@ export default function ProcessFlowSection() {
               height={1536}
               className="w-full h-auto max-h-[650px] object-contain transition-transform duration-500 group-hover:scale-[1.01]"
               loading="lazy"
+              decoding="async"
             />
 
             {/* Hover overlay hint */}

@@ -28,7 +28,7 @@ import {
   isRateLimited,
   resolveModels,
 } from '../lib/chat-core.mjs';
-import { getCorsHeaders, jsonResponse, optionsResponse } from '../lib/http.mjs';
+import { getCorsHeaders, jsonResponse, optionsResponse, readJsonBody } from '../lib/http.mjs';
 import { KNOWLEDGE_FILES } from '../lib/knowledge-files.mjs';
 
 /**
@@ -106,7 +106,12 @@ export async function onRequestPost(context) {
   }
 
   try {
-    const { message, chatHistory, website } = await request.json();
+    const body = await readJsonBody(request, 16384);
+    if (!body.ok) {
+      return jsonResponse({ error: body.error }, body.status, corsHeaders);
+    }
+
+    const { message, chatHistory, website } = body.data;
 
     // Honeypot field check (bot protection). `website` is an invisible input
     // that legitimate users never fill in; only automated bots do.

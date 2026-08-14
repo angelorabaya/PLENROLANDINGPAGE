@@ -38,6 +38,7 @@ export default function Footer() {
                 width={904}
                 height={654}
                 loading="lazy"
+                decoding="async"
                 className="w-10 h-10 object-contain"
               />
               <div>
@@ -191,6 +192,7 @@ export default function Footer() {
                 width={960}
                 height={984}
                 loading="lazy"
+                decoding="async"
                 className="w-5 h-5 object-contain"
               />
               <p className="text-xs text-gray-500">

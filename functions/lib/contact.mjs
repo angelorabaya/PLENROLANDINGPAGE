@@ -96,13 +96,16 @@ export function buildContactEmail({ data, toEmail, fromEmail, fromName = 'PLENRO
   ].join('\n');
 
   // Escape HTML-significant characters. Single quotes are intentionally left
-  // untouched: they need no escaping in HTML text content.
+  // untouched: they need no escaping in HTML text content. Entity names are
+  // assembled at runtime ('&' + name + ';') so the source stays ASCII-clean.
+  const HTML_ENTITIES = {
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    '"': 'quot',
+  };
   const escapeHtml = (s) =>
-    s
-      .replace(/&/g, '&')
-      .replace(/</g, '<')
-      .replace(/>/g, '>')
-      .replace(/"/g, '"');
+    s.replace(/[&<>"]/g, (ch) => '&' + HTML_ENTITIES[ch] + ';');
 
   const html = `
     <div style="font-family:Arial,Helvetica,sans-serif;color:#0f172a;max-width:600px;margin:0 auto;">

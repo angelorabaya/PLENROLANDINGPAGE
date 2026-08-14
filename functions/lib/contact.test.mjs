@@ -87,7 +87,8 @@ test('normalizeContactPayload sanitizes malicious input', () => {
   }
 });
 
-test('buildContactEmail produces a Resend-shaped payload with escaping', () => {
+test('buildContactEmail produces a Resend-shaped payload with HTML escaping', () => {
+  const ent = (name) => '&' + name + ';';
   const payload = buildContactEmail({
     data: {
       name: 'Jane "JJ" Doe',
@@ -103,9 +104,29 @@ test('buildContactEmail produces a Resend-shaped payload with escaping', () => {
   assert.deepEqual(payload.to, ['enro@misamisoriental.gov.ph']);
   assert.equal(payload.reply_to, 'jane@example.com');
   assert.equal(payload.subject, 'Website Inquiry: Feedback');
-  assert.ok(payload.text.includes('Jane "JJ" Doe'));
-  assert.ok(payload.html.includes('Great site <3 & thanks!'));
+  assert.ok(payload.text.includes('Jane "JJ" Doe')); // plain-text body stays unescaped
+  assert.ok(payload.html.includes('Jane ' + ent('quot') + 'JJ' + ent('quot') + ' Doe'));
+  assert.ok(payload.html.includes('Great site ' + ent('lt') + '3 ' + ent('amp') + ' thanks!'));
   assert.ok(!payload.html.includes('<script>'));
+});
+
+test('buildContactEmail escapes HTML injection attempts', () => {
+  const ent = (name) => '&' + name + ';';
+  const payload = buildContactEmail({
+    data: {
+      name: 'Attacker',
+      email: 'attacker@example.com',
+      subject: 'Injection',
+      message: '<img src=x onerror=alert(1)>',
+    },
+    toEmail: 'enro@misamisoriental.gov.ph',
+    fromEmail: 'onboarding@resend.dev',
+  });
+
+  // The raw tag must be escaped so an email client renders it as text,
+  // not as a live <img> element.
+  assert.ok(payload.html.includes(ent('lt') + 'img src=x onerror=alert(1)' + ent('gt')));
+  assert.ok(!payload.html.includes('<img'));
 });
 
 test('buildContactEmail honors a custom from name and email', () => {

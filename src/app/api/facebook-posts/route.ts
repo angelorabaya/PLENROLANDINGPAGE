@@ -34,7 +34,7 @@ export async function POST() {
   } catch (err) {
     console.error('Facebook posts route error:', err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Failed to load Facebook posts.' },
+      { error: 'Failed to load Facebook posts. Please try again later.' },
       { status: 502 }
     );
   }

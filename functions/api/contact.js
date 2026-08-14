@@ -25,7 +25,7 @@ import {
   buildContactEmail,
   sendContactEmail,
 } from '../lib/contact.mjs';
-import { getCorsHeaders, jsonResponse, optionsResponse } from '../lib/http.mjs';
+import { getCorsHeaders, jsonResponse, optionsResponse, readJsonBody } from '../lib/http.mjs';
 
 // Default Resend sender (test-only: can only deliver to your account inbox).
 const DEFAULT_FROM_EMAIL = 'onboarding@resend.dev';
@@ -44,14 +44,12 @@ export async function onRequestPost(context) {
     );
   }
 
-  let payload;
-  try {
-    payload = await request.json();
-  } catch {
-    return jsonResponse({ error: 'Invalid JSON body.' }, 400, corsHeaders);
+  const body = await readJsonBody(request, 8192);
+  if (!body.ok) {
+    return jsonResponse({ error: body.error }, body.status, corsHeaders);
   }
 
-  const normalized = normalizeContactPayload(payload);
+  const normalized = normalizeContactPayload(body.data);
 
   // Honeypot field check (bot protection). Reject bots as a success so they
   // learn nothing about the form.
@@ -94,11 +92,8 @@ export async function onRequestPost(context) {
     return jsonResponse({ ok: true }, 200, corsHeaders);
   } catch (err) {
     console.error('Contact form email error:', err);
-    // Surface the underlying error (e.g. Resend "domain not verified") so the
-    // office can diagnose configuration issues without inspecting logs.
-    const detail = err instanceof Error ? err.message : 'Unknown error';
     return jsonResponse(
-      { error: `Failed to send your message: ${detail}` },
+      { error: 'Failed to send your message. Please try again later.' },
       502,
       corsHeaders
     );

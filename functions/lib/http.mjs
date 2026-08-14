@@ -63,3 +63,40 @@ export function jsonResponse(payload, status, corsHeaders) {
 export function optionsResponse(corsHeaders) {
   return new Response(null, { status: 204, headers: corsHeaders });
 }
+
+/**
+ * Read and parse a JSON request body with a size cap. Returns either
+ * `{ ok: true, data }` or `{ ok: false, status, error }` so callers can reject
+ * oversized bodies and malformed JSON without crashing the function.
+ * @param {Request} request
+ * @param {number} [maxBytes]
+ * @returns {Promise<{ ok: true; data: Record<string, unknown> } | { ok: false; status: number; error: string }>}
+ */
+export async function readJsonBody(request, maxBytes = 16384) {
+  const rawLength = request?.headers?.get?.('content-length');
+  const contentLength = rawLength ? Number(rawLength) : 0;
+  if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+    return { ok: false, status: 413, error: 'Request body too large.' };
+  }
+
+  let text;
+  try {
+    text = await request.text();
+  } catch {
+    return { ok: false, status: 400, error: 'Unable to read request body.' };
+  }
+
+  if (text.length > maxBytes) {
+    return { ok: false, status: 413, error: 'Request body too large.' };
+  }
+
+  try {
+    const data = JSON.parse(text);
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return { ok: false, status: 400, error: 'Invalid JSON body.' };
+    }
+    return { ok: true, data };
+  } catch {
+    return { ok: false, status: 400, error: 'Invalid JSON body.' };
+  }
+}

@@ -9,7 +9,7 @@ import ProcessFlowSection from "@/components/landing/process-flow-section";
 import ResourcesSection from "@/components/landing/resources-section";
 import LocationSection from "@/components/landing/location-section";
 import Footer from "@/components/landing/footer";
-import OrdinanceChat from "@/components/landing/ordinance-chat";
+import ChatWidget from "@/components/landing/chat-widget";
 import BackToTop from "@/components/landing/back-to-top";
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
       <LocationSection />
       <Footer />
       <BackToTop />
-      <OrdinanceChat />
+      <ChatWidget />
     </main>
   );
 }

@@ -84,11 +84,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('Contact form email error:', err);
-    // Surface the underlying error (e.g. Resend "domain not verified") so the
-    // office can diagnose configuration issues without inspecting logs.
-    const detail = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Failed to send your message: ${detail}` },
+      { error: 'Failed to send your message. Please try again later.' },
       { status: 502 }
     );
   }
