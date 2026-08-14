@@ -58,7 +58,7 @@ export default function ResourcesSection() {
         >
           <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 rounded-full mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-gray-900 dark:text-white mb-4">
-            Public Resources &amp; Downloads
+            Downloads
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm md:text-base font-medium">
             Access official documents, permit application templates, and regulatory compliance guidelines.

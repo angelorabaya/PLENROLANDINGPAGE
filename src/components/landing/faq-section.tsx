@@ -25,7 +25,7 @@ const generalFaqs: FaqItem[] = [
   {
     question: 'How do I apply for a permit or download the forms?',
     answer:
-      'Visit the Public Resources and Downloads section of this website (or click Resources in the main menu) to download the application forms and checklists. You can also send an inquiry through the contact form.',
+      'Visit the Downloads section of this website (or click Downloads in the main menu) to download the application forms and checklists. You can also send an inquiry through the contact form.',
   },
 ];
 

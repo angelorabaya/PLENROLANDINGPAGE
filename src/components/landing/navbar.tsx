@@ -14,7 +14,7 @@ const navLinks = [
   { label: 'FAQ', href: '#faq' },
   { label: 'News', href: '#news' },
   { label: 'Process Flow', href: '#process-flow' },
-  { label: 'Resources', href: '#resources' },
+  { label: 'Downloads', href: '#resources' },
   { label: 'Contact', href: '#contact' },
 ];
 
