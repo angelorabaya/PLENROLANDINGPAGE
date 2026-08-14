@@ -11,6 +11,7 @@ const navLinks = [
   { label: 'Mandate', href: '#mandate' },
   { label: 'Team', href: '#team' },
   { label: 'Regulations', href: '#regulatory-framework' },
+  { label: 'FAQ', href: '#faq' },
   { label: 'News', href: '#news' },
   { label: 'Process Flow', href: '#process-flow' },
   { label: 'Resources', href: '#resources' },
@@ -33,26 +34,41 @@ export default function Navbar() {
   }, []);
 
   // Scroll-spy: mark the section currently in view as the active nav item.
+  // A marker line is fixed at 40% of the viewport height; the last section
+  // whose top edge has passed above that line is the active one.
   useEffect(() => {
-    const sections = navLinks
-      .map((link) => document.getElementById(link.href.slice(1)))
-      .filter((el): el is HTMLElement => el !== null);
+    const updateActiveSection = () => {
+      const marker = window.innerHeight * 0.4;
+      let current = '';
 
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${entry.target.id}`);
-          }
+      for (const link of navLinks) {
+        const section = document.getElementById(link.href.slice(1));
+        if (!section) continue;
+        if (section.getBoundingClientRect().top <= marker) {
+          current = link.href;
         }
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-    );
+      }
 
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+      // At the bottom of the page, force the last section active even when it
+      // is too short for its top edge to cross the marker line.
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 4;
+      if (nearBottom) {
+        current = navLinks[navLinks.length - 1].href;
+      }
+
+      setActiveSection(current);
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+    window.addEventListener('resize', updateActiveSection, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateActiveSection);
+      window.removeEventListener('resize', updateActiveSection);
+    };
   }, []);
 
   const bgColor = scrolled

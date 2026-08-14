@@ -12,6 +12,7 @@ import {
   Tag,
   MessageSquare,
 } from 'lucide-react';
+import TurnstileWidget from './turnstile-widget';
 
 // Must mirror the limits enforced server-side in functions/lib/contact.mjs.
 const FIELD_LIMITS = {
@@ -58,6 +59,7 @@ export default function ContactForm() {
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [serverError, setServerError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   const handleChange =
     (field: FieldName) =>
@@ -111,6 +113,7 @@ export default function ContactForm() {
           subject: form.subject,
           message: form.message,
           website: form.website,
+          turnstileToken,
         }),
       });
 
@@ -320,6 +323,8 @@ export default function ContactForm() {
               <span>{serverError}</span>
             </div>
           )}
+
+          <TurnstileWidget onToken={setTurnstileToken} />
 
           <button
             type="submit"

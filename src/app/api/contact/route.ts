@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { isRateLimited } from '../../../../functions/lib/chat-core.mjs';
+import { verifyTurnstile } from '../../../../functions/lib/turnstile.mjs';
 import {
   normalizeContactPayload,
   buildContactEmail,
@@ -53,6 +54,23 @@ export async function POST(req: NextRequest) {
 
   if (!normalized.ok) {
     return NextResponse.json({ errors: normalized.errors }, { status: 400 });
+  }
+
+  // Verify Turnstile when a secret is configured; skip otherwise.
+  const turnstileSecret = process.env.CF_TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const rawPayload = payload as Record<string, unknown>;
+    const token =
+      typeof rawPayload.turnstileToken === 'string'
+        ? rawPayload.turnstileToken
+        : '';
+    const verified = await verifyTurnstile(token, turnstileSecret, clientIp);
+    if (!verified) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please try again.' },
+        { status: 400 }
+      );
+    }
   }
 
   const apiKey = process.env.RESEND_API_KEY;

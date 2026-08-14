@@ -4,6 +4,8 @@ import DepartmentHeadMessage from "@/components/landing/department-head-message"
 import MandateSection from "@/components/landing/mandate-section";
 import TeamSection from "@/components/landing/team-section";
 import RegulatorySection from "@/components/landing/regulatory-section";
+import RegulationSearch from "@/components/landing/regulation-search";
+import FaqSection from "@/components/landing/faq-section";
 import NewsSection from "@/components/landing/news-section";
 import ProcessFlowSection from "@/components/landing/process-flow-section";
 import ResourcesSection from "@/components/landing/resources-section";
@@ -21,6 +23,8 @@ export default function Home() {
       <MandateSection />
       <TeamSection />
       <RegulatorySection />
+      <RegulationSearch />
+      <FaqSection />
       <NewsSection />
       <ProcessFlowSection />
       <ResourcesSection />

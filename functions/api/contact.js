@@ -26,6 +26,7 @@ import {
   sendContactEmail,
 } from '../lib/contact.mjs';
 import { getCorsHeaders, jsonResponse, optionsResponse, readJsonBody } from '../lib/http.mjs';
+import { verifyTurnstile } from '../lib/turnstile.mjs';
 
 // Default Resend sender (test-only: can only deliver to your account inbox).
 const DEFAULT_FROM_EMAIL = 'onboarding@resend.dev';
@@ -59,6 +60,24 @@ export async function onRequestPost(context) {
 
   if (!normalized.ok) {
     return jsonResponse({ errors: normalized.errors }, 400, corsHeaders);
+  }
+
+  // Verify Turnstile when a secret is configured; skip otherwise so the form
+  // still works before the site owner adds the keys.
+  const turnstileSecret = env.CF_TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const token =
+      body.data && typeof body.data.turnstileToken === 'string'
+        ? body.data.turnstileToken
+        : '';
+    const verified = await verifyTurnstile(token, turnstileSecret, clientIp);
+    if (!verified) {
+      return jsonResponse(
+        { error: 'Bot verification failed. Please try again.' },
+        400,
+        corsHeaders
+      );
+    }
   }
 
   const apiKey = env.RESEND_API_KEY;
