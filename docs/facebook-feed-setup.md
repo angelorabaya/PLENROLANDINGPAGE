@@ -1,5 +1,13 @@
 # Facebook Feed Carousel — App & Token Setup Guide
 
+> **Status: the live feed is no longer displayed on the website.**
+> The *Latest Activities & Implementations* section now renders a curated
+> announcements list plus an "Official Facebook Page" link card — see
+> [`announcements.md`](./announcements.md). The carousel, the Graph API proxy,
+> and the `FACEBOOK_*` environment variables are kept only in case you want to
+> switch the live feed back on, and none of them are required for the site to
+> build or run. Keep reading if you do want to re-enable it.
+
 This guide shows how to display your **PLENRO Facebook Page posts** as a carousel on the *Latest Activities & Implementations* section.
 
 The website fetches posts through a **server-side proxy** (`/api/facebook-posts`) that calls the Facebook **Graph API**, so your access token is **never exposed to visitors**. You only need to do the steps below **once** to generate the credentials.
@@ -53,6 +61,29 @@ This is the most common point of confusion. There are **three different secrets*
    - **App Secret** (click *Show* and verify your password). Keep it secret — never put it in client code.
 
 > If your app is still in **Development mode**, the token you generate will only work for the app's admins/testers — which is fine because you are an admin. For a public production feed read by all visitors, the server-side proxy uses the token, so Development mode is acceptable for read-only page posts.
+
+---
+
+## Who can generate the token?
+
+You need a **Facebook account that holds a role on the PLENRO Page itself**, not merely
+membership in a group that talks about PLENRO, and not a personal profile that follows it.
+
+| Your relationship | Can you get a Page token? |
+| --- | --- |
+| **Page Admin** (classic Page role) | ✅ Yes — the reliable option |
+| Page Editor / Moderator / Advertiser / Analyst role | ⚠️ Usually yes via `me/accounts`, but `pages_read_engagement` may be refused; Admin is safer |
+| Member of a Facebook **Group** (not the Page) | ❌ No — groups and Pages are different objects |
+| Business Manager **person** with the Page asset assigned (full control) | ✅ Yes — accept the asset in Business Suite first |
+| Business Manager **System User** with the Page asset assigned | ✅ Best option — tokens do not expire, no personal login |
+
+Notes:
+- You must be **logged into that same Facebook account** in the Graph API Explorer when generating the token.
+- If `me/accounts` returns an empty `data` array, the logged-in account does not hold a Page role.
+- If the Page belongs to a Business portfolio, the System User route (Business Settings →
+  Users → System users → Generate token → assign `pages_read_engagement`,
+  `pages_show_list`, `read_insights`) is the recommended production setup because the
+  token is not tied to a person and does not expire when they log out.
 
 ---
 
@@ -157,7 +188,10 @@ It returns JSON like:
 
 | Symptom | Fix |
 | --- | --- |
+| `deprecated` / `version ... has been removed` | Meta retires each Graph API version ~2 years after release. Set `FACEBOOK_API_VERSION` to a current version (e.g. `v23.0`, `v24.0`) — no code change needed. The default is `v23.0`. |
 | `(#10) To use 'Page Public Content Access'...` | Your app/token lacks the read permission; confirm `pages_read_engagement` and that you are a Page admin. |
+| Carousel shows cached posts that are days old | That is the stale-cache fallback: the Graph call is failing. Check the Worker logs for the `Facebook posts proxy error` line and refresh the token. |
+| `Too many requests` | The `facebook` rate-limit bucket (10/min per IP) was hit while the cache was cold. Cached responses are served before the limiter, so this only appears after many cold loads from one IP. |
 | Empty `posts` array | The page may have no public posts, or the token is a User token not a Page token. Re-check Step 3 (get the page's `access_token` from `me/accounts`). |
 | Token expires | If you used a short-lived token, repeat Step 5 to get a long-lived Page token. |
 | `App not set up` / permissions denied | Ensure the app is in Development mode with you as an admin (works for page reads), or move to Live mode. |

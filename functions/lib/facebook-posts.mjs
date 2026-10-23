@@ -7,7 +7,29 @@
  * and in the Worker runtime (bundled by Wrangler).
  */
 
-const GRAPH_API_BASE = 'https://graph.facebook.com/v21.0';
+const GRAPH_API_BASE = 'https://graph.facebook.com';
+
+/**
+ * Graph API versions are retired ~2 years after release, so a hard-coded
+ * version eventually makes every call fail. Override with the
+ * FACEBOOK_API_VERSION env var (e.g. "v24.0") without touching code.
+ */
+export const DEFAULT_API_VERSION = 'v23.0';
+
+const API_VERSION_PATTERN = /^v\d+\.\d+$/;
+
+/**
+ * Resolve the Graph API version from an env object, falling back to
+ * DEFAULT_API_VERSION for missing/invalid values.
+ * @param {{ FACEBOOK_API_VERSION?: string }} [env]
+ * @returns {string}
+ */
+export function resolveApiVersion(env) {
+  const value = env?.FACEBOOK_API_VERSION;
+  return typeof value === 'string' && API_VERSION_PATTERN.test(value.trim())
+    ? value.trim()
+    : DEFAULT_API_VERSION;
+}
 
 /**
  * @typedef {{ media_type?: string; title?: string; description?: string; url?: string; media?: { image?: { src?: string }; source?: string } }} Attachment
@@ -48,8 +70,16 @@ function resolveCaption(raw) {
  * @returns {string}
  */
 function resolvePicture(raw) {
-  const media = raw?.attachments?.data?.[0]?.media;
-  return media?.image?.src || media?.source || '';
+  const attachment = raw?.attachments?.data?.[0];
+  const media = attachment?.media;
+  const subMedia = attachment?.subattachments?.data?.[0]?.media;
+  return (
+    media?.image?.src ||
+    media?.source ||
+    subMedia?.image?.src ||
+    subMedia?.source ||
+    ''
+  );
 }
 
 /**
@@ -71,38 +101,42 @@ export function sanitizePost(raw) {
 
 /**
  * Build the Graph API URL for a page's posts.
- * Uses the non-deprecated `attachments` subfields for images/captions.
+ * Uses the non-deprecated `attachments` subfields for images/captions, and
+ * supports both `attachments.media` (posts) and `attachments.subattachments`
+ * (multi-photo posts / albums).
  * @param {string} pageId
  * @param {string} accessToken
  * @param {number} limit
+ * @param {string} [apiVersion]
  * @returns {string}
  */
-export function buildPostsUrl(pageId, accessToken, limit = 10) {
+export function buildPostsUrl(pageId, accessToken, limit = 10, apiVersion = DEFAULT_API_VERSION) {
+  const version = API_VERSION_PATTERN.test(apiVersion) ? apiVersion : DEFAULT_API_VERSION;
   const fields = [
     'id',
     'message',
     'story',
     'created_time',
     'permalink_url',
-    'attachments{media_type,title,description,url,media{image{src},source}}',
+    'attachments{media_type,title,description,url,media{image{src},source},subattachments{media{image{src},source}}}',
   ].join(',');
   const params = new URLSearchParams({
     fields,
     limit: String(limit),
     access_token: accessToken,
   });
-  return `${GRAPH_API_BASE}/${encodeURIComponent(pageId)}/posts?${params.toString()}`;
+  return `${GRAPH_API_BASE}/${version}/${encodeURIComponent(pageId)}/posts?${params.toString()}`;
 }
 
 /**
  * Fetch and normalize page posts from the Facebook Graph API.
  * @param {string} pageId
  * @param {string} accessToken
- * @param {{ limit?: number; fetchFn?: typeof fetch }} [options]
+ * @param {{ limit?: number; fetchFn?: typeof fetch; apiVersion?: string }} [options]
  * @returns {Promise<{ posts: ReturnType<typeof sanitizePost>[] }>}
  */
 export async function fetchPagePosts(pageId, accessToken, options = {}) {
-  const { limit = 10, fetchFn = fetch } = options;
+  const { limit = 10, fetchFn = fetch, apiVersion = DEFAULT_API_VERSION } = options;
 
   if (!pageId) {
     throw new Error('FACEBOOK_PAGE_ID is not configured.');
@@ -111,7 +145,7 @@ export async function fetchPagePosts(pageId, accessToken, options = {}) {
     throw new Error('FACEBOOK_ACCESS_TOKEN is not configured.');
   }
 
-  const url = buildPostsUrl(pageId, accessToken, limit);
+  const url = buildPostsUrl(pageId, accessToken, limit, apiVersion);
   const res = await fetchFn(url, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
@@ -124,16 +158,27 @@ export async function fetchPagePosts(pageId, accessToken, options = {}) {
     const detail = fbError
       ? `Facebook API error (${fbError.code || res.status}): ${fbError.message || 'Unknown error'}`
       : `Facebook API returned status ${res.status}.`;
-    throw new Error(detail);
+    const error = new Error(detail);
+    // Surface the Graph API codes so callers can log/return them.
+    error.status = res.status;
+    error.code = fbError?.code || res.status;
+    error.subcode = fbError?.error_subcode;
+    throw error;
   }
 
   const rawPosts = Array.isArray(body?.data) ? body.data : [];
   const posts = rawPosts
     .map(sanitizePost)
-    // Keep any post that has content: a caption, an image, or a permalink.
-    // (Filter AFTER sanitizing, since pictures/captions may come from
-    // attachments rather than top-level raw fields.)
-    .filter((post) => post.id && (post.message || post.full_picture));
+    // Keep any post that has content: a caption, an image, or at least a
+    // permalink. (Filter AFTER sanitizing, since pictures/captions may come
+    // from attachments rather than top-level raw fields.) Keeping
+    // permalink-only posts avoids an empty carousel when the page shares
+    // reels/links without a caption or preview image.
+    .filter((post) => post.id && (post.message || post.full_picture || post.permalink_url));
+
+  if (posts.length === 0 && rawPosts.length > 0) {
+    console.warn(`Facebook feed: ${rawPosts.length} post(s) returned but none usable.`);
+  }
 
   return { posts };
 }

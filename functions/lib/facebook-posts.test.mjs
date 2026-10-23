@@ -9,6 +9,8 @@ import {
   sanitizePost,
   buildPostsUrl,
   fetchPagePosts,
+  resolveApiVersion,
+  DEFAULT_API_VERSION,
 } from './facebook-posts.mjs';
 
 test('sanitizePost shapes a raw post safely', () => {
@@ -46,10 +48,28 @@ test('sanitizePost truncates long messages and tolerates missing fields', () => 
 
 test('buildPostsUrl encodes fields and token', () => {
   const url = buildPostsUrl('789005134298348', 'EAAtoken', 10);
-  assert.ok(url.startsWith('https://graph.facebook.com/v21.0/789005134298348/posts?'));
+  assert.ok(
+    url.startsWith(`https://graph.facebook.com/${DEFAULT_API_VERSION}/789005134298348/posts?`)
+  );
   assert.ok(url.includes('fields=id%2Cmessage%2Cstory%2Ccreated_time%2Cpermalink_url%2Cattachments'));
   assert.ok(url.includes('limit=10'));
   assert.ok(url.includes('access_token=EAAtoken'));
+});
+
+test('buildPostsUrl honours an explicit API version and ignores invalid ones', () => {
+  const custom = buildPostsUrl('123', 'EAAtoken', 5, 'v24.0');
+  assert.ok(custom.startsWith('https://graph.facebook.com/v24.0/123/posts?'));
+
+  const invalid = buildPostsUrl('123', 'EAAtoken', 5, 'latest');
+  assert.ok(invalid.startsWith(`https://graph.facebook.com/${DEFAULT_API_VERSION}/`));
+});
+
+test('resolveApiVersion validates FACEBOOK_API_VERSION', () => {
+  assert.equal(resolveApiVersion({ FACEBOOK_API_VERSION: 'v24.0' }), 'v24.0');
+  assert.equal(resolveApiVersion({ FACEBOOK_API_VERSION: ' v22.0 ' }), 'v22.0');
+  assert.equal(resolveApiVersion({ FACEBOOK_API_VERSION: '24' }), DEFAULT_API_VERSION);
+  assert.equal(resolveApiVersion({}), DEFAULT_API_VERSION);
+  assert.equal(resolveApiVersion(undefined), DEFAULT_API_VERSION);
 });
 
 test('sanitizePost falls back to attachment caption and story when message is empty', () => {
@@ -76,6 +96,22 @@ test('sanitizePost falls back to attachment caption and story when message is em
     story: 'Added photos',
   });
   assert.equal(all.message, 'Text post');
+});
+
+test('sanitizePost resolves picture from subattachments (multi-photo posts)', () => {
+  const post = sanitizePost({
+    id: 'album',
+    attachments: {
+      data: [
+        {
+          subattachments: {
+            data: [{ media: { image: { src: 'https://fbcdn/album1.jpg' } } }],
+          },
+        },
+      ],
+    },
+  });
+  assert.equal(post.full_picture, 'https://fbcdn/album1.jpg');
 });
 
 test('sanitizePost resolves picture from attachment media', () => {
@@ -118,18 +154,35 @@ test('fetchPagePosts keeps image-only posts (picture from attachments)', async (
             },
             permalink_url: 'https://www.facebook.com/p4',
           },
-          { id: 'p3' }, // no message and no picture → filtered out
+          // permalink-only post (shared reel/link without caption) → kept
+          {
+            id: 'p5',
+            permalink_url: 'https://www.facebook.com/p5',
+            created_time: '2026-08-02T09:30:00+0000',
+          },
+          { id: 'p3' }, // no message, picture, or permalink → filtered out
         ],
       }),
       { status: 200 }
     );
 
   const { posts } = await fetchPagePosts('789005134298348', 'EAAtoken', { fetchFn: fakeFetch });
-  assert.equal(posts.length, 3);
+  assert.equal(posts.length, 4);
   assert.deepEqual(
     posts.map((p) => p.id),
-    ['p1', 'p2', 'p4']
+    ['p1', 'p2', 'p4', 'p5']
   );
+});
+
+test('fetchPagePosts passes the requested API version to the Graph API', async () => {
+  let requestedUrl = '';
+  const fakeFetch = async (url) => {
+    requestedUrl = String(url);
+    return new Response(JSON.stringify({ data: [{ id: 'p1', message: 'Hi' }] }), { status: 200 });
+  };
+
+  await fetchPagePosts('123', 'EAAtoken', { fetchFn: fakeFetch, apiVersion: 'v24.0' });
+  assert.ok(requestedUrl.startsWith('https://graph.facebook.com/v24.0/123/posts?'));
 });
 
 test('fetchPagePosts throws a descriptive error on Graph API failure', async () => {

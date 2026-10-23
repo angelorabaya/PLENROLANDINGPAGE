@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { fetchPagePosts } from '../../../../functions/lib/facebook-posts.mjs';
+import {
+  fetchPagePosts,
+  resolveApiVersion,
+} from '../../../../functions/lib/facebook-posts.mjs';
 
 /**
  * DEV-ONLY Next.js App Router Route Handler for POST /api/facebook-posts.
@@ -29,12 +32,22 @@ export async function POST() {
   }
 
   try {
-    const { posts } = await fetchPagePosts(pageId, accessToken, { limit: 10 });
-    return NextResponse.json({ posts });
+    const { posts } = await fetchPagePosts(pageId, accessToken, {
+      limit: 10,
+      apiVersion: resolveApiVersion({
+        FACEBOOK_API_VERSION: process.env.FACEBOOK_API_VERSION,
+      }),
+    });
+    return NextResponse.json({ posts, source: 'live' });
   } catch (err) {
     console.error('Facebook posts route error:', err);
+    const detail = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { error: 'Failed to load Facebook posts. Please try again later.' },
+      {
+        error: 'Failed to load Facebook posts. Please try again later.',
+        code: (err as { code?: number | string })?.code ?? 'graph_api_error',
+        detail,
+      },
       { status: 502 }
     );
   }
