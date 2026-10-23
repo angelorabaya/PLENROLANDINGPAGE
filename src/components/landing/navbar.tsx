@@ -12,7 +12,7 @@ const navLinks = [
   { label: 'Team', href: '#team' },
   { label: 'Regulations', href: '#regulatory-framework' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'News', href: '#news' },
+  { label: 'Facebook', href: '#facebook' },
   { label: 'Process Flow', href: '#process-flow' },
   { label: 'Downloads', href: '#resources' },
   { label: 'Contact', href: '#contact' },

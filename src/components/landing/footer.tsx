@@ -102,7 +102,7 @@ export default function Footer() {
                 { label: "Mandate & Role", href: "#mandate" },
                 { label: "Our Team", href: "#team" },
                 { label: "Regulatory Framework", href: "#regulatory-framework" },
-                { label: "Latest News", href: "#news" },
+                { label: "Official Facebook Page", href: "#facebook" },
                 { label: "Public Resources", href: "#resources" },
               ].map((link) => (
                 <li key={link.label}>

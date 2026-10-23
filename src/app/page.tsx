@@ -6,7 +6,7 @@ import TeamSection from "@/components/landing/team-section";
 import RegulatorySection from "@/components/landing/regulatory-section";
 import RegulationSearch from "@/components/landing/regulation-search";
 import FaqSection from "@/components/landing/faq-section";
-import NewsSection from "@/components/landing/news-section";
+import FacebookSection from "@/components/landing/facebook-section";
 import ProcessFlowSection from "@/components/landing/process-flow-section";
 import ResourcesSection from "@/components/landing/resources-section";
 import LocationSection from "@/components/landing/location-section";
@@ -25,7 +25,7 @@ export default function Home() {
       <RegulatorySection />
       <RegulationSearch />
       <FaqSection />
-      <NewsSection />
+      <FacebookSection />
       <ProcessFlowSection />
       <ResourcesSection />
       <LocationSection />

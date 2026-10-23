@@ -1,12 +1,12 @@
 # Facebook Feed Carousel — App & Token Setup Guide
 
 > **Status: the live feed is no longer displayed on the website.**
-> The *Latest Activities & Implementations* section now renders a curated
-> announcements list plus an "Official Facebook Page" link card — see
-> [`announcements.md`](./announcements.md). The carousel, the Graph API proxy,
-> and the `FACEBOOK_*` environment variables are kept only in case you want to
-> switch the live feed back on, and none of them are required for the site to
-> build or run. Keep reading if you do want to re-enable it.
+> The home page now has a dedicated **Official Facebook Page** section that only
+> links out to the Page — see [`facebook-section.md`](./facebook-section.md).
+> The carousel, the Graph API proxy, and the `FACEBOOK_*` environment variables
+> are kept only in case you want to switch the live feed back on, and none of
+> them are required for the site to build or run. Keep reading if you do want to
+> re-enable it.
 
 This guide shows how to display your **PLENRO Facebook Page posts** as a carousel on the *Latest Activities & Implementations* section.
 
