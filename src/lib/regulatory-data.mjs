@@ -51,6 +51,12 @@ export const permitTypes = [
     definition:
       'Any individual who wishes to develop his/her idle land into productive use, wherein, during the course of development, there is a need to extract and dispose of a specific volume of ordinary earth, limestone, sand and gravel, and other quarry materials therefrom, may apply for a Special Permit to Extract and Dispose (Earth Moving Permit) with the Provincial Governor/City Mayor through the Provincial/City Mining Regulatory Board. The permit is only valid for six (6) months from the date of issuance and is not renewable.',
   },
+  {
+    name: 'Small-Scale Mining Contract',
+    validity: '2 Years',
+    definition:
+      'An agreement awarded by the Board to voluntarily organized and registered individual miners or cooperatives that "entitles the small-scale mining contractor to the right to mine, extract and dispose of mineral ores for commercial purposes", which is strictly non-transferable and valid for a renewable two-year term.',
+  },
 ];
 
 /** @typedef {{ particular: string; fee: string }} RegistrationFee */
