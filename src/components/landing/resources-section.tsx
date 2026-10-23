@@ -40,6 +40,22 @@ const additionalDownloads = [
     name: 'Requirements for Government Gratuitous Permit Application',
     url: '/publicgratuitous.pdf',
   },
+  {
+    name: 'Application/Renewal for Small-Scale Mining Contract (SSMC)',
+    url: '/ssmcapplication.pdf',
+  },
+  {
+    name: 'Checklist of Requirements on Small-Scale Mining Contract (SSMC)',
+    url: '/ssmcrequirements.pdf',
+  },
+  {
+    name: 'Proposed Two-Year Work Program (SSMC)',
+    url: '/ssmc2yearprogram.pdf',
+  },
+  {
+    name: 'Checklist of Requirements for Registration and Licensing of Small-Scale Miners',
+    url: '/ssmclicensing.pdf',
+  },
 ]
 
 
